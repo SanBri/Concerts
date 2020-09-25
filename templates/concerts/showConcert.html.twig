@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+<section>
+    <p> Jour actuel : {{ currentDay}} / Mois actuel : {{ currentMonth }}  / Année actuelle : {{ currentYear }}</p>
+    <p> Jour concert : {{ concert.date | date('d')  }} / Mois concert : {{ concert.date | date('m')  }}  / Année concert : {{ concert.date | date('Y')  }}
+    <p>Date actuelle : {{ currentDate }} / Date Concert :  {{ concert.date | date('d-m-Y') }}</p>
+
+    <p>{{ concert.description }}</p>
+
+    <p>Date : {{ concert.date | date('d/m/Y') }}</p>
+
+    <p>Prix : {{ concert.price }}€ </p>
+
+    <p>Capacité : {{ concert.maxPlaces }} places </p>
+</section>
+
+<section>
+    <h2>Réservations</h2>
+
+    {% if concert.maxPlaces > concert.reservation  %}
+        {% if app.user %}
+            {{ form_start(reservationForm) }}
+                <p>{{ form_errors(reservationForm)}}
+                <p>{{ form_row(reservationForm.reservedPlaces, {
+                    'required': 'true',
+                    'label': 'Nombre de places : ',
+                    'attr': {
+                        'placeholder': 1,
+                        'min': 1, 
+                        'max': ' '
+                        } 
+                    })
+                }}</p>
+                    <input type="submit" value="Réserver">
+            {{ form_end(reservationForm) }}
+        {% else %}
+            <p>Veuillez vous connecter pour réserver</p>
+            <a href="{{ path("login") }}">Connexion</a>
+        {% endif %}
+    {% else %}
+        <p>Il n'y a plus de place disponible pour ce concert.</p>
+    {% endif %}
+</section>
+
+{% endblock %}

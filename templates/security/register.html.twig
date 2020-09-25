@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+
+{% block body %}
+
+{% if not app.user %}
+    <section>
+        {{ form_start(registerForm) }}
+            <p>{{ form_errors(registerForm)}}
+            {{ form_row(registerForm.email, { 
+                'required': 'true', 
+                'label': 'E-mail : ', 
+                'attr': {
+                    'placeholder': "E-mail" 
+                    } 
+                }) 
+            }}</p>
+            {{ form_row(registerForm.password, { 
+                'required': 'true', 
+                'label': 'Mot de passe : ', 
+                'attr': {
+                    'placeholder': "Mot de passe" 
+                    } 
+                }) 
+            }}</p>
+            {{ form_row(registerForm.confirmPassword, { 
+                'required': 'true', 
+                'label': 'Confirmation mot de passe : ', 
+                'attr': {
+                    'placeholder': "Veuillez confirmer votre mot de passe" 
+                    } 
+                }) 
+            }}</p>
+            <input type="submit" value="Inscription">
+        {{ form_end(registerForm) }}
+    </section>
+{% else %}
+    <p>Vous êtes déjà inscrit.</p>
+{% endif %}
+
+{% endblock %}

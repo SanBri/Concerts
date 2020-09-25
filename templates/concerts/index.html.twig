@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+
+<ul>
+    {% if not app.user %}
+        <li><a href="{{ path("register") }}">Inscription</a></li>
+    {% else %}
+        <li><a href="{{ path("reservationsList", {'userId' : app.user.id}) }}">Mes réservations</a></li>
+    {% endif %}
+    <li><a href="{{ path("concertsList")}}">Liste des concerts</a></li>
+    <li><a href="{{ path("createConcert")}}">Créer un concert</a></li>
+</ul>
+
+{% endblock %}

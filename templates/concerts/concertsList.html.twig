@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+<section>
+ {% for concert in concerts %}
+        
+    <a href="{{ path('showConcert', {'id' : concert.id}) }}"><p>{{ concert.id }} - {{ concert.name }} - {{ concert.date | date('d/m/Y') }} - {{ concert.city }} - {{ concert.price }}€</a>
+    {% if concert.reservation >= concert.maxPlaces %}
+      <strong>| COMPLET</strong> 
+    {% endif %}
+    </p>
+
+ {% endfor %}
+</section>
+
+{% endblock %}

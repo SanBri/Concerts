@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+<article>
+ {% if reservations %}
+    {% for reservation in reservations %}
+
+        <p><strong>Réservation n°{{ reservation.id }}</strong></p>
+
+        <p><strong>Concert :</strong> {{ reservation.concert.name }} | <strong>Nombre de places réservées :</strong> {{ reservation.reservedPlaces }} 
+
+        <a href="{{ path('showConcert', {'id' : reservation.concert.id}) }}"><input type="button" value="Voir le concert"></a>
+        <a href="#"><input type="button" value="Annuler la réservation"></a></p>
+
+        <hr />
+
+    {% endfor %}
+ {% else %}
+    <p>Vous n'avez pas de réservation</p>    
+    <p><a href="{{ path('concertsList') }}">Voir les concerts</a></p>
+ {% endif %}
+</article>
+
+{% endblock %}

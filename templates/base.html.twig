@@ -2,10 +2,27 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <title>{% block title %} {{ title }} {% endblock %}</title>
         {% block stylesheets %}{% endblock %}
     </head>
     <body>
+
+        <header>
+            {% if app.request.get('_route') != 'index' %} 
+                <a href="{{ path("index") }}">Index</a> |
+            {% endif %}
+            {% if app.request.get('_route') == 'showConcert' %}
+                <a href="{{ path("concertsList") }}">Retour aux concerts</a> |                
+            {% endif %}
+            {% if app.user %}
+                <a href="{{ path("logout") }}">Déconnexion</a>
+            {% else %}
+                <a href="{{ path("login") }}">Connexion</a>
+            {% endif %}
+            <hr />
+        </header>
+
+        <h1>{{ title }}</h1>
         {% block body %}{% endblock %}
         {% block javascripts %}{% endblock %}
     </body>

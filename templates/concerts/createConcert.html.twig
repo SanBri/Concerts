@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    {{ form_start(createForm) }}
+        <p>{{ form_errors(createForm)}}
+        {{ form_row(createForm.name, { 
+            'required': 'true', 
+            'label': 'Nom : ', 
+            'attr': {
+                'placeholder': "Nom de l'Événement/Artiste" 
+                } 
+            }) 
+        }}</p>
+        <p>{{ form_row(createForm.description,
+         {'required': 'true',
+          'label': 'Description : ',
+           'attr': {
+               'placeholder': "Description du concert",
+               } 
+            }) 
+        }}</p>
+        <p>{{ form_row(createForm.date, {
+            'required': 'true',
+            'label': 'Date : ',
+            'attr': {
+                'placeholder': "Date du concert"
+                } 
+            }) 
+        }}</p>
+        <p>{{ form_row(createForm.city, {
+            'required': 'true', 'label': 'Ville : ',
+            'attr': {
+                'placeholder': "Ville du concert"
+                } 
+            }) 
+        }}</p>
+        <p>{{ form_row(createForm.adress, {
+            'required': 'true',
+            'label': 'Adresse : ',
+            'attr': {
+                'placeholder': "Lieu du concert"
+                }  
+            })
+        }}</p>
+        <p>{{ form_row(createForm.price, {
+            'required': 'true',
+            'label': 'Prix (en €) : ',
+            'attr': {
+                'min': 0, 
+                'max': 9999
+                } 
+            })
+        }}</p>
+        <p>{{ form_row(createForm.maxPlaces, {
+            'required': 'true',
+            'label': 'Places maximum : ',
+            'attr': {
+                'min': 0,
+                'max': 9999
+                } 
+            }) 
+        }}</p>
+
+        <p><input type="submit" value="Envoyer"></p>
+    {{ form_end(createForm )}}
+
+{% endblock %}
