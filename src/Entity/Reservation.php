@@ -33,7 +33,7 @@ class Reservation
     /**
      * @ORM\Column(type="integer")
      */
-    public $reservedPlaces;
+    private $reservedPlaces;
 
     public function getId(): ?int
     {

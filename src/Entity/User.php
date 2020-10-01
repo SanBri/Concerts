@@ -53,9 +53,15 @@ class User implements UserInterface
      */
     private $reservations;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Concert::class, mappedBy="organizer")
+     */
+    private $organizedConcerts;
+
     public function __construct()
     {
         $this->reservations = new ArrayCollection();
+        $this->organizedConcerts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -147,4 +153,35 @@ class User implements UserInterface
         return ['ROLE_USER'];
     }
     public function eraseCredentials() {}
+
+    /**
+     * @return Collection|Concert[]
+     */
+    public function getOrganizedConcerts(): Collection
+    {
+        return $this->organizedConcerts;
+    }
+
+    public function addOrganizedConcert(Concert $organizedConcert): self
+    {
+        if (!$this->organizedConcerts->contains($organizedConcert)) {
+            $this->organizedConcerts[] = $organizedConcert;
+            $organizedConcert->setOrganizer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrganizedConcert(Concert $organizedConcert): self
+    {
+        if ($this->organizedConcerts->contains($organizedConcert)) {
+            $this->organizedConcerts->removeElement($organizedConcert);
+            // set the owning side to null (unless already changed)
+            if ($organizedConcert->getOrganizer() === $this) {
+                $organizedConcert->setOrganizer(null);
+            }
+        }
+
+        return $this;
+    }
 }

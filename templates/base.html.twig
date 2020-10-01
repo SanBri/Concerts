@@ -8,6 +8,7 @@
     <body>
 
         <header>
+        <p>
             {% if app.request.get('_route') != 'index' %} 
                 <a href="{{ path("index") }}">Index</a> |
             {% endif %}
@@ -20,6 +21,7 @@
                 <a href="{{ path("login") }}">Connexion</a>
             {% endif %}
             <hr />
+        </p>
         </header>
 
         <h1>{{ title }}</h1>

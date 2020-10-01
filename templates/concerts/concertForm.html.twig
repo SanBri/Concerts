@@ -20,14 +20,13 @@
                } 
             }) 
         }}</p>
-        <p>{{ form_row(createForm.date, {
-            'required': 'true',
-            'label': 'Date : ',
-            'attr': {
-                'placeholder': "Date du concert"
-                } 
-            }) 
-        }}</p>
+        {% if not editMode %} 
+            <p>{{ form_row(createForm.date, {
+                'required': 'true',
+                'label': 'Date : ',
+                }) 
+            }}</p>
+        {% endif %}
         <p>{{ form_row(createForm.city, {
             'required': 'true', 'label': 'Ville : ',
             'attr': {
@@ -49,7 +48,7 @@
             'attr': {
                 'min': 0, 
                 'max': 9999
-                } 
+                 } 
             })
         }}</p>
         <p>{{ form_row(createForm.maxPlaces, {
@@ -62,7 +61,19 @@
             }) 
         }}</p>
 
-        <p><input type="submit" value="Envoyer"></p>
+        <button type="submit">
+            {% if editMode %}
+                Enregister les modifications
+            {% else %}
+                Créer le concert
+            {% endif %}
+        </button>
+             {% if editMode %}
+                <a href="{{ path('showConcert', {'id': concertId}) }}">
+            {% else %}
+                <a href="">
+            {% endif %}
+        <button>Annuler</button></a>
     {{ form_end(createForm )}}
 
 {% endblock %}

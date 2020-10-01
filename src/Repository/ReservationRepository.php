@@ -24,7 +24,7 @@ class ReservationRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('r')
             ->where('r.user = :user')
             ->setParameter('user', $userId)
-            ->orderBy('r.user', 'DESC');
+            ->orderBy('r.id', 'DESC');
         $query = $qb->getQuery();
         return $query->execute();
     }

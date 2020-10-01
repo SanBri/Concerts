@@ -19,12 +19,12 @@ class Concert
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    public $id;
+    private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    public $name;
+    private $name;
 
     /**
      * @ORM\Column(type="text")
@@ -33,6 +33,7 @@ class Concert
 
     /**
      * @ORM\Column(type="datetime")
+     * @Assert\GreaterThanOrEqual("today", message="La date est déjà passée")
      */
     private $date;
 
@@ -71,6 +72,12 @@ class Concert
      */
     public $reservation;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="organizedConcerts")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $organizer;
+
     public function __construct()
     {
         $this->reservations = new ArrayCollection();
@@ -103,6 +110,10 @@ class Concert
         $this->description = $description;
 
         return $this;
+    }
+
+    public function getToday(): ?\DateTimeInterface {
+        return $this->today;
     }
 
     public function getDate(): ?\DateTimeInterface
@@ -216,6 +227,18 @@ class Concert
     public function setReservation(?int $reservation): self
     {
         $this->reservation = $reservation;
+
+        return $this;
+    }
+
+    public function getOrganizer(): ?User
+    {
+        return $this->organizer;
+    }
+
+    public function setOrganizer(?User $organizer): self
+    {
+        $this->organizer = $organizer;
 
         return $this;
     }

@@ -7,6 +7,7 @@
         <form action="{{ path("login") }}" method="post">
             <p><input type="text" required placeholder="Adresse e-mail" name="_username"></p>
             <p><input type="password" required placeholder="Mot de passe" name="_password"></p>
+            {# <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"> #}
             <input type="submit" value="Envoyer">
         </form>
     </section>

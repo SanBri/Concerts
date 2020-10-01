@@ -1,0 +1,18 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+
+<p>{{ concert.name }}</p>
+
+ {{ form_start(newDateForm) }}
+    <p>{{ form_row(newDateForm.date, {
+        'required': 'true',
+        'label': 'Changer la date : ',
+    }) }}</p>
+    
+    <input type="submit" value="Confirmer">
+
+ {{ form_end(newDateForm) }} 
+
+
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+<section>
+    <p>Êtes-vous sûr de vouloir annuler cette réservation ? </p>
+    <p><a href="{{ path('reservationsList', {'userId': app.user.id}) }}"><input type="button" value="Retour"></a>
+    <a href="{{ path('cancelReservation', {'reservationId': reservationId, 'submittedToken': submittedToken}) }}"><input type="button" value="Confirmer"></a></p>
+</section>
+
+{% endblock %}
