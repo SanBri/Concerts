@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ConcertRepository;
 use Doctrine\Common\Collections\Collection;
@@ -49,11 +48,22 @@ class Concert
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Assert\Range(
+     *      min = 0,
+     *      max = 9999,
+     *      notInRangeMessage = " Le prix doit être compris entre {{ min }} et {{ max }}",
+     * )
      */
     private $price;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\GreaterThanOrEqual(propertyPath="reservation", message="Le nombre de places ne peut pas être inférieur aux réservations déjà effectuées !")
+     * @Assert\Range(
+     *      min = 1,
+     *      max = 9999,
+     *      notInRangeMessage = " Entre {{ min }} et {{ max }} places doivent être disponibles",
+     * )
      */
     private $maxPlaces;
 
@@ -110,10 +120,6 @@ class Concert
         $this->description = $description;
 
         return $this;
-    }
-
-    public function getToday(): ?\DateTimeInterface {
-        return $this->today;
     }
 
     public function getDate(): ?\DateTimeInterface

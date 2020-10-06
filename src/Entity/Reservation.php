@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Entity\Concert;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ReservationRepository; 
+use Symfony\Component\Validator\Constraints as Assert; 
 
 /**
  * @ORM\Entity(repositoryClass=ReservationRepository::class)
@@ -32,6 +33,7 @@ class Reservation
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\GreaterThan(0, message="Veuillez réserver au moins 1 place")
      */
     private $reservedPlaces;
 

@@ -1,0 +1,48 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+
+ <section>
+    {% if concerts %}
+
+        <h2>À venir</h2>
+
+        {% for concert in concerts %}
+            
+            {% if concert.reservation == null %}
+                {% set reservations = 0 %}
+            {% else %}
+                {% set reservations = concert.reservation %}
+            {% endif %}
+
+            <p><a href="{{ path('showConcert', {'id': concert.id}) }} ">{{ concert.id }} - {{ concert.name }} - {{concert.date | date('d/m/Y')}}</a>
+            
+            {% set submittedToken = csrf_token('concert-organizer') %}
+            <a href="{{ path('editConcert', {'id': concert.id, 'submittedToken': submittedToken}) }}"><input type="button" value="Modifier"></a>
+            <a href="{{ path('changeConcertDate', {'id': concert.id, 'submittedToken': submittedToken}) }}"><input type="button" value="Reporter"></a>
+            <a href="{{ path('confirmCancelConcert', {'id': concert.id, 'submittedToken': submittedToken}) }}"><input type="button" value="Annuler"></a>
+            <br />    
+            <em>({{reservations}}/{{concert.maxPlaces}} réservations)</em></p>
+            
+
+        {% endfor %} 
+
+    {% else %}
+        <p>Vous n'avez pas de concert à venir</p>
+    {% endif %}
+ </section>  {# FIN CONCERTS À VENIR #}
+
+ <section>
+
+    {% if canceledConcerts %}
+
+        <h2>Concerts annulés</h2>
+
+        {% for canceledConcert in canceledConcerts %}
+            <p><a href="{{ path('showConcert', {'id': canceledConcert.id}) }} ">{{ canceledConcert.id }} - {{ canceledConcert.name }} - {{canceledConcert.date | date('d/m/Y')}}</a>
+        {% endfor %}
+
+    {% endif %}
+
+ </section>  {# FIN CONCERTS ANNULÉS #}
+{% endblock %}

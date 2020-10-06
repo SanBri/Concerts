@@ -10,6 +10,7 @@
     {% endif %}
     <li><a href="{{ path("concertsList")}}">Liste des concerts</a></li>
     {% if app.user and app.user.role == 'Organizer' %}
+        <li><a href="{{ path("myConcertsList", {'userId' : app.user.id}) }}">Mes concerts</a></li>
         <li><a href="{{ path("createConcert")}}">Créer un concert</a></li>
     {% endif %}
 </ul>

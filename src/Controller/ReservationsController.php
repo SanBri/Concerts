@@ -16,7 +16,7 @@ class ReservationsController extends AbstractController
     /**
      * @Route("/reservations/{userId}", name="reservationsList")
      */
-    public function reservationsList($userId, Request $request, ObjectManager $manager)
+    public function reservationsList($userId)
     {
         $actualUser = $this->getUser();
         if ($actualUser != NULL) {
@@ -33,7 +33,7 @@ class ReservationsController extends AbstractController
                 'reservations' => $reservations
             ]);
         } else {
-            return $this->redirectToRoute("error403");
+            return $this->redirectToRoute('reservationsList', ['userId' => $actualUserId] );
         }
     }
 

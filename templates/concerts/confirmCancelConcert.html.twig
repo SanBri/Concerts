@@ -1,0 +1,17 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+
+<section>
+
+    <h3>{{concert.name}} - <em>{{concert.date | date('d/m/Y à h:i')}}</em></h3>
+    <p><strong>Voulez-vous vraiment annuler cet événement ?</strong><br />
+    Toutes les réservations pour cet événement seront annulées et un mail informatif sera envoyé à toutes les personnes ayant une réservation pour celui-ci.</p>
+
+    <p><a href="{{ path('showConcert', {'id': concert.id}) }}"><input type="button" value="Retour"></a>
+    <a href="{{ path('cancelConcert', {'id': concert.id, 'submittedToken': submittedToken}) }}"><input type="button" value="Confirmer"></a>
+
+</section>
+
+
+{% endblock %}

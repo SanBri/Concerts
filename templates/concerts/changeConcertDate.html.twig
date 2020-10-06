@@ -2,7 +2,7 @@
 
 {% block body %}
 
-<p>{{ concert.name }}</p>
+ <h3>{{concert.name}} - <em>{{concert.date | date('d/m/Y à h:i')}}</em></h3>
 
  {{ form_start(newDateForm) }}
     <p>{{ form_row(newDateForm.date, {
@@ -10,6 +10,7 @@
         'label': 'Changer la date : ',
     }) }}</p>
     
+    <p><a href="{{ path('showConcert', {'id': concert.id}) }}"><input type="button" value="Retour"></a>
     <input type="submit" value="Confirmer">
 
  {{ form_end(newDateForm) }} 

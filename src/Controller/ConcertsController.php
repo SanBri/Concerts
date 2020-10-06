@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-
 use DateTime;
 use App\Entity\User;
 use App\Entity\Concert;
@@ -62,9 +61,12 @@ class ConcertsController extends AbstractController
                 } else {
                     $organizer = $concert->getOrganizer();
                     $organizerId = $organizer->getId(); 
-                    if ( $organizerId != $userId || !$this->isCsrfTokenValid('concert-organizer', $submittedToken) ) {
+                    $concertStatus = $concert->getStatus();
+                    if ( $organizerId != $userId || !$this->isCsrfTokenValid('concert-organizer', $submittedToken)  ) {
                         return $this->redirectToRoute('error403');
-                    }   
+                    } else if ( $concertStatus == "Annulé" ) {
+                        return $this->redirectToRoute('canceledConcert');
+                    }
                 }
                 $form = $this->createForm(CreateConcertType::class, $concert);
                 $form->handleRequest($request);
@@ -96,20 +98,56 @@ class ConcertsController extends AbstractController
                 $resp = 'unknownConcert';
             } else {
                 $concertRepo = $this->getDoctrine()->getRepository(Concert::class);
-                $concert = $concertRepo->find($concertId);    
-                $userId = $user->getId();
-                $organizer = $concert->getOrganizer();
-                $organizerId = $organizer->getId();
-                if ($userId == $organizerId && $this->isCsrfTokenValid('concert-organizer', $submittedToken)) {
-                    $resp = true;
+                $concert = $concertRepo->find($concertId); 
+                $concertStatus = $concert->getStatus();
+                if ( $concertStatus == "À venir" ) { 
+                    $userId = $user->getId();
+                    $organizer = $concert->getOrganizer();
+                    $organizerId = $organizer->getId();
+                    if ($userId == $organizerId && $this->isCsrfTokenValid('concert-organizer', $submittedToken)) {
+                        $resp = true;
+                    } else {
+                        $resp = 'error403';
+                    }
                 } else {
-                    $resp = 'error403';
+                    $resp = 'canceledConcert';
                 }
             }
         } else {
             $resp = 'login';
         }
         return $resp;
+    }
+
+    /**
+     * @Route("/mes_concerts/{userId}", name="myConcertsList")
+     */
+    public function myConcertsList($userId) {
+        $actualUser = $this->getUser();
+        if ($actualUser) {
+            $actualUserId = $actualUser->getId();
+            $actualUserRole = $actualUser->getRole();
+            if ( $actualUserRole == "Organizer" ) {
+                if ( $actualUserId == $userId ) {
+                    $concertRepo = $this->getDoctrine()->getRepository(Concert::class);
+                    $coming = "À venir";
+                    $canceled = "Annulé";
+                    $comingConcerts = $concertRepo->findMyConcerts($userId, $coming);
+                    $canceledConcerts = $concertRepo->findMyConcerts($userId, $canceled);
+                    return $this->render('concerts/myConcertsList.html.twig', [
+                        'title' => 'Mes concerts',
+                        'concerts' => $comingConcerts,
+                        'canceledConcerts' => $canceledConcerts
+                    ]);
+                } else {
+                    return $this->redirectToRoute('myConcertsList', ['userId' => $actualUserId] );
+                }
+            } else {
+                return $this->redirectToRoute('error403');
+            }
+        } else {
+            return $this->redirectToRoute('login');
+        }
     }
 
     /**
@@ -227,7 +265,7 @@ class ConcertsController extends AbstractController
                     $user = $this->getUser();
                     return $this->redirectToRoute("reservationsList", ['userId' => $user->getId()]);
                 } else {
-                    $notEnoughPlaces = "Il n'y a pas assez de places disponibles";
+                    $notEnoughPlaces = "Il n'y a pas assez de place disponible";
                 }
             }
     
@@ -249,7 +287,46 @@ class ConcertsController extends AbstractController
 
     }
 
+    /**
+     * @Route("/confirmation_annulation_concert/{id}/{submittedToken}", name="confirmCancelConcert")
+     */
+    public function confirmCancelConcert(Concert $concert = null, $submittedToken)
+    {
+        if ($concert) {
+            $concertId = $concert->getId();
+        } else {
+            $concertId = null;
+        }
+        $resp = $this->isUserTheOrganizer($concertId, $submittedToken);
+        if ($resp === true) {
+            return $this->render('concerts/confirmCancelConcert.html.twig', [
+                'title' => "Confirmation d'annulation d'événement",
+                'concert' => $concert,
+                'submittedToken' => $submittedToken
+            ]);
+        } else {
+            return $this->redirectToRoute($resp);
+        }
+    }
 
+    /**
+     * @Route("/annulation_concert/{id}/{submittedToken}", name="cancelConcert")
+     */
+    public function cancelConcert(Concert $concert = null, $submittedToken, ObjectManager $manager)
+    {
+        if ($concert) {
+            $concertId = $concert->getId();
+        } else {
+            $concertId = null;
+        }
+        $resp = $this->isUserTheOrganizer($concertId, $submittedToken);
+        if ($resp === true) {
+            $concert->setStatus('Annulé');
+            $manager->persist($concert);
+            $manager->flush();
+            return $this->redirectToRoute("showConcert", ["id" => $concert->getId()]);
+        } else {
+            return $this->redirectToRoute($resp);
+        }
+    }
 }
-
-

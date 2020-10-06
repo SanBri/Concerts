@@ -26,6 +26,7 @@ class ErrorsController extends AbstractController
             'title' => 'Erreur 403',
         ]);
     }
+
     /**
      * @Route("/unknown_concert", name="unknownConcert")
      */
@@ -33,6 +34,16 @@ class ErrorsController extends AbstractController
     {
         return $this->render('errors/unknownConcert.html.twig', [
             'title' => 'Concert introuvable',
+        ]);
+    }
+
+    /**
+     * @Route("/concert_annulé", name="canceledConcert")
+     */
+    public function canceledConcert()
+    {
+        return $this->render('errors/canceledConcert.html.twig', [
+            'title' => 'Concert annulé',
         ]);
     }
 }

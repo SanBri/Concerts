@@ -2,13 +2,15 @@
 
 {% block body %}
 
-{{ newDate | date('d-m-Y-h-i', "Europe/Paris") }}<br />
+{# {{ newDate | date('d-m-Y-h-i', "Europe/Paris") }}<br />
 {% set currentDate = date() %}
-{{ currentDate | date('d/m/Y h:i', "Europe/Paris") }}
-{% set newDate = newDate | date('d-m-Y-h-i') %}
+{{ currentDate | date('d/m/Y h:i', "Europe/Paris") }} #}
+{% set newDate = newDate | date('d-m-Y-h-i') %}   
 
 <section>
-    <p><strong>Êtes-vous sûr de vouloir reporter cet événément au {{ newDate | date('d/m/Y à H:i') }}</strong> ? <br />
+    <h3>{{concert.name}}</h3>
+
+    <p><strong>Voulez-vous vraiment reporter cet événément au {{ newDate | date('d/m/Y à H:i') }}</strong> ? <br />
     Un mail informatif sera envoyé à toutes les personnes ayant une réservation pour cet événement</p>
     <p><a href="{{ path('showConcert', {'id': concert.id}) }}"><input type="button" value="Retour"></a>
     <a href="{{ path('changeDate', {'id': concert.id, 'submittedToken': submittedToken, 'newDate': newDate}) }}"><input type="button" value="Confirmer"></a></p>
