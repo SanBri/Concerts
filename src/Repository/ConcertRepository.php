@@ -42,4 +42,20 @@ class ConcertRepository extends ServiceEntityRepository
         return $query->execute();
     }
 
+    public function findConcertSearch($queryData) {
+        $qb = $this->createQueryBuilder('c')
+        ->where('c.city = :city')
+        ->orWhere('c.name = :name')
+        ->andWhere('c.status = :status')
+        ->setParameters([
+            'city' => $queryData,
+            'name' => $queryData,
+            'status' => "À venir"
+        ])
+        ->orderBy('c.date', 'DESC');
+    $query = $qb->getQuery();
+    return $query->execute();
+    }
+
+
 }

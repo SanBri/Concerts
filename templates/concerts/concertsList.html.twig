@@ -3,15 +3,36 @@
 {% block body %}
 
 <section>
- {% for concert in concerts %}
-        
-    <a href="{{ path('showConcert', {'id' : concert.id}) }}"><p>{{ concert.id }} - {{ concert.name }} - {{ concert.date | date('d/m/Y') }} - {{ concert.city }} - {{ concert.price }}€</a>
-    {% if concert.reservation >= concert.maxPlaces %}
-      <strong>| COMPLET</strong> 
-    {% endif %}
-    </p>
 
- {% endfor %}
+  <p>{{ form_start(concertsSearchForm) }}
+    {{ form_errors(concertsSearchForm) }}
+    {{ form_row(concertsSearchForm.concertsQuery, {
+        'required': 'true',
+        'label': ' ',
+        'attr': {
+          'placeholder': "Rerchercher par ville ou par nom"
+        }
+      }) 
+    }}
+    <input type="submit" value="Rechercher">
+    {% if query %}
+      <a href="{{ path('concertsList') }}"><input type="button" value="Retour"></a>
+    {% endif %}
+  {{ form_end(concertsSearchForm) }}</p>
+</section>
+
+<section>
+  {% if concerts %}
+    {% for concert in concerts %}  
+      <a href="{{ path('showConcert', {'id' : concert.id}) }}"><p>{{ concert.id }} - {{ concert.name }} - {{ concert.date | date('d/m/Y') }} - {{ concert.city }} - {{ concert.price }}€</a>
+      {% if concert.reservation >= concert.maxPlaces %}
+        <strong>| COMPLET</strong> 
+      {% endif %}
+      </p>
+    {% endfor %}
+  {% else %}
+    <p>Il n'y a aucun concert prévu</p>
+  {% endif %}
 </section>
 
 {% endblock %}

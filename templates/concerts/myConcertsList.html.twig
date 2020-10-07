@@ -17,10 +17,10 @@
 
             <p><a href="{{ path('showConcert', {'id': concert.id}) }} ">{{ concert.id }} - {{ concert.name }} - {{concert.date | date('d/m/Y')}}</a>
             
-            {% set submittedToken = csrf_token('concert-organizer') %}
-            <a href="{{ path('editConcert', {'id': concert.id, 'submittedToken': submittedToken}) }}"><input type="button" value="Modifier"></a>
-            <a href="{{ path('changeConcertDate', {'id': concert.id, 'submittedToken': submittedToken}) }}"><input type="button" value="Reporter"></a>
-            <a href="{{ path('confirmCancelConcert', {'id': concert.id, 'submittedToken': submittedToken}) }}"><input type="button" value="Annuler"></a>
+            {% set organizerToken = csrf_token('concert-organizer') %}
+            <a href="{{ path('editConcert', {'id': concert.id, 'organizerToken': organizerToken}) }}"><input type="button" value="Modifier"></a>
+            <a href="{{ path('changeConcertDate', {'id': concert.id, 'organizerToken': organizerToken}) }}"><input type="button" value="Reporter"></a>
+            <a href="{{ path('confirmCancelConcert', {'id': concert.id, 'organizerToken': organizerToken}) }}"><input type="button" value="Annuler"></a>
             <br />    
             <em>({{reservations}}/{{concert.maxPlaces}} réservations)</em></p>
             

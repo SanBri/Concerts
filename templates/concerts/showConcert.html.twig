@@ -10,10 +10,10 @@
 
 <section>
     {% if app.user and app.user.id == concert.organizer.id and concert.status == "À venir" %}
-        {% set submittedToken = csrf_token('concert-organizer') %}
-        <p><a href="{{ path('editConcert', {'id': concert.id, 'submittedToken': submittedToken}) }}"><input type="button" value="Modifier les informations"></a>
-        <a href="{{ path('changeConcertDate', {'id': concert.id, 'submittedToken': submittedToken}) }}"><input type="button" value="Reporter cet événement"></a>
-        <a href="{{ path('confirmCancelConcert', {'id': concert.id, 'submittedToken': submittedToken}) }}"><input type="button" value="Annuler cet événement"></a></p>
+        {% set organizerToken = csrf_token('concert-organizer') %}
+        <p><a href="{{ path('editConcert', {'id': concert.id, 'organizerToken': organizerToken}) }}"><input type="button" value="Modifier les informations"></a>
+        <a href="{{ path('changeConcertDate', {'id': concert.id, 'organizerToken': organizerToken}) }}"><input type="button" value="Reporter cet événement"></a>
+        <a href="{{ path('confirmCancelConcert', {'id': concert.id, 'organizerToken': organizerToken}) }}"><input type="button" value="Annuler cet événement"></a></p>
     {% endif %}
     
     <p>Organisé par {{ concert.organizer.email }}</p>

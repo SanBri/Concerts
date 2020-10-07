@@ -7,13 +7,16 @@
 {{ currentDate | date('d/m/Y h:i', "Europe/Paris") }} #}
 {% set newDate = newDate | date('d-m-Y-h-i') %}   
 
+
 <section>
+    {% set confirmToken = csrf_token(concert.id) %}
+
     <h3>{{concert.name}}</h3>
 
     <p><strong>Voulez-vous vraiment reporter cet événément au {{ newDate | date('d/m/Y à H:i') }}</strong> ? <br />
     Un mail informatif sera envoyé à toutes les personnes ayant une réservation pour cet événement</p>
     <p><a href="{{ path('showConcert', {'id': concert.id}) }}"><input type="button" value="Retour"></a>
-    <a href="{{ path('changeDate', {'id': concert.id, 'submittedToken': submittedToken, 'newDate': newDate}) }}"><input type="button" value="Confirmer"></a></p>
+    <a href="{{ path('changeDate', {'id': concert.id, 'organizerToken': organizerToken, 'newDate': newDate, 'confirmToken': confirmToken}) }}"><input type="button" value="Confirmer"></a></p>
 </section>
 
 {% endblock %}

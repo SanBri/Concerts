@@ -6,6 +6,7 @@ use DateTime;
 use App\Entity\User;
 use App\Entity\Concert;
 use App\Entity\Reservation;
+use App\Form\ConcertSearchType;
 use App\Form\CreateConcertType;
 use App\Form\CreateReservationType;
 use Doctrine\Persistence\ObjectManager;
@@ -39,9 +40,9 @@ class ConcertsController extends AbstractController
 
     /**
      * @Route("/create", name="createConcert")
-     * @Route("/edit/{id}/{submittedToken}", name="editConcert")
+     * @Route("/edit/{id}/{organizerToken}", name="editConcert")
      */
-    public function concertForm($submittedToken = null, Concert $concert = null, Request $request, ObjectManager $manager)
+    public function concertForm($organizerToken = null, Concert $concert = null, Request $request, ObjectManager $manager)
     {
         $user = $this->getUser();
 
@@ -62,7 +63,7 @@ class ConcertsController extends AbstractController
                     $organizer = $concert->getOrganizer();
                     $organizerId = $organizer->getId(); 
                     $concertStatus = $concert->getStatus();
-                    if ( $organizerId != $userId || !$this->isCsrfTokenValid('concert-organizer', $submittedToken)  ) {
+                    if ( $organizerId != $userId || !$this->isCsrfTokenValid('concert-organizer', $organizerToken)  ) {
                         return $this->redirectToRoute('error403');
                     } else if ( $concertStatus == "Annulé" ) {
                         return $this->redirectToRoute('canceledConcert');
@@ -91,7 +92,7 @@ class ConcertsController extends AbstractController
         }
     }
 
-    public function isUserTheOrganizer($concertId, $submittedToken) {
+    public function isUserTheOrganizer($concertId, $organizerToken) {
         $user = $this->getUser();
         if ($user) {
             if ($concertId === null) {
@@ -104,7 +105,7 @@ class ConcertsController extends AbstractController
                     $userId = $user->getId();
                     $organizer = $concert->getOrganizer();
                     $organizerId = $organizer->getId();
-                    if ($userId == $organizerId && $this->isCsrfTokenValid('concert-organizer', $submittedToken)) {
+                    if ($userId == $organizerId && $this->isCsrfTokenValid('concert-organizer', $organizerToken)) {
                         $resp = true;
                     } else {
                         $resp = 'error403';
@@ -151,16 +152,16 @@ class ConcertsController extends AbstractController
     }
 
     /**
-     * @Route("/changement_date/{id}/{submittedToken}", name="changeConcertDate")
+     * @Route("/changement_date/{id}/{organizerToken}", name="changeConcertDate")
      */
-    public function changeConcertDate(Concert $concert = null, $submittedToken, Request $request)
+    public function changeConcertDate(Concert $concert = null, $organizerToken, Request $request)
     { 
         if ($concert) {
             $concertId = $concert->getId();
         } else {
             $concertId = null;
         }
-        $resp = $this->isUserTheOrganizer($concertId, $submittedToken);
+        $resp = $this->isUserTheOrganizer($concertId, $organizerToken);
         if ($resp === true) {
             $currentYear = date('Y');
             $form = $this->createFormBuilder($concert)
@@ -180,7 +181,7 @@ class ConcertsController extends AbstractController
                     'title' => "Confirmation du report de l'événement",
                     'newDate' => $formDataNewDate,
                     'concert' => $concert,
-                    'submittedToken' => $submittedToken
+                    'organizerToken' => $organizerToken
                 ]);      
             }
             return $this->render('concerts/changeConcertDate.html.twig', [
@@ -194,24 +195,28 @@ class ConcertsController extends AbstractController
     }
 
     /**
-     * @Route("/changeDate/{id}/{submittedToken}/{newDate}", name="changeDate")
+     * @Route("/changeDate/{id}/{organizerToken}/{newDate}/{confirmToken}", name="changeDate")
      */
-    public function changeDate($newDate, $submittedToken, Concert $concert = null, Request $request, ObjectManager $manager)
+    public function changeDate($newDate, $organizerToken, $confirmToken, Concert $concert = null, Request $request, ObjectManager $manager)
     { 
         if ($concert) {
             $concertId = $concert->getId();
         } else {
             $concertId = null;
         }
-        $resp = $this->isUserTheOrganizer($concertId, $submittedToken);
+        $resp = $this->isUserTheOrganizer($concertId, $organizerToken);
         if ($resp === true) {
-            $newDate_dt = DateTime::createFromFormat('d-m-Y-h-i', $newDate);
-            $newDate_stamp = $newDate_dt->getTimestamp();
-            $newDateFormat = $newDate_dt->setTimestamp($newDate_stamp);
-            $concert->setDate($newDateFormat);
-            $manager->persist($concert);
-            $manager->flush();
-            return $this->redirectToRoute("showConcert", ['id' => $concert->getId()]);
+            if ( $this->isCsrfTokenValid($concertId, $confirmToken) ) {
+                $newDate_dt = DateTime::createFromFormat('d-m-Y-h-i', $newDate);
+                $newDate_stamp = $newDate_dt->getTimestamp();
+                $newDateFormat = $newDate_dt->setTimestamp($newDate_stamp);
+                $concert->setDate($newDateFormat);
+                $manager->persist($concert);
+                $manager->flush();
+                return $this->redirectToRoute("showConcert", ['id' => $concert->getId()]);
+            } else {
+                return $this->redirectToRoute("changeConcertDate", ["id" => $concertId, "organizerToken" => $organizerToken]);
+            }
         } else {
            return $this->redirectToRoute($resp);
         } 
@@ -220,16 +225,29 @@ class ConcertsController extends AbstractController
     /**
      * @Route("/concerts", name="concertsList")
      */
-    public function concertsList()
+    public function concertsList(Request $request)
     {
         
         $status = 'À venir';
+        $query = false;
+        $title = "Liste des concerts";
         $concertRepo = $this->getDoctrine()->getRepository(Concert::class);
         $concerts = $concertRepo->findComingConcerts($status);
+        $form = $this->createForm(ConcertSearchType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $queryConcerts = $form->get('concertsQuery')->getData();
+            $concerts = $concertRepo->findConcertSearch($queryConcerts);
+            $title = ' Recherche de concerts : ' . $queryConcerts . '';
+            $query = true;
+        }
         
         return $this->render('concerts/concertsList.html.twig', [
-            'title' => 'Liste des concerts',
-            'concerts' => $concerts
+            'title' => $title,
+            'concertsSearchForm' => $form->createView(),
+            'concerts' => $concerts,
+            'query' => $query
         ]);
     }
 
@@ -288,21 +306,21 @@ class ConcertsController extends AbstractController
     }
 
     /**
-     * @Route("/confirmation_annulation_concert/{id}/{submittedToken}", name="confirmCancelConcert")
+     * @Route("/confirmation_annulation_concert/{id}/{organizerToken}", name="confirmCancelConcert")
      */
-    public function confirmCancelConcert(Concert $concert = null, $submittedToken)
+    public function confirmCancelConcert(Concert $concert = null, $organizerToken)
     {
         if ($concert) {
             $concertId = $concert->getId();
         } else {
             $concertId = null;
         }
-        $resp = $this->isUserTheOrganizer($concertId, $submittedToken);
+        $resp = $this->isUserTheOrganizer($concertId, $organizerToken);
         if ($resp === true) {
             return $this->render('concerts/confirmCancelConcert.html.twig', [
                 'title' => "Confirmation d'annulation d'événement",
                 'concert' => $concert,
-                'submittedToken' => $submittedToken
+                'organizerToken' => $organizerToken
             ]);
         } else {
             return $this->redirectToRoute($resp);
@@ -310,23 +328,28 @@ class ConcertsController extends AbstractController
     }
 
     /**
-     * @Route("/annulation_concert/{id}/{submittedToken}", name="cancelConcert")
+     * @Route("/annulation_concert/{id}/{organizerToken}/{confirmToken}", name="cancelConcert")
      */
-    public function cancelConcert(Concert $concert = null, $submittedToken, ObjectManager $manager)
+    public function cancelConcert(Concert $concert = null, $organizerToken, $confirmToken, ObjectManager $manager)
     {
-        if ($concert) {
-            $concertId = $concert->getId();
-        } else {
-            $concertId = null;
-        }
-        $resp = $this->isUserTheOrganizer($concertId, $submittedToken);
-        if ($resp === true) {
-            $concert->setStatus('Annulé');
-            $manager->persist($concert);
-            $manager->flush();
-            return $this->redirectToRoute("showConcert", ["id" => $concert->getId()]);
-        } else {
-            return $this->redirectToRoute($resp);
-        }
+            if ($concert) {
+                $concertId = $concert->getId();
+            } else {
+                $concertId = null;
+            }
+            $resp = $this->isUserTheOrganizer($concertId, $organizerToken);
+            if ($resp === true) {
+                if ( $this->isCsrfTokenValid($concertId, $confirmToken) ) {
+                    $concert->setStatus('Annulé');
+                    $manager->persist($concert);
+                    $manager->flush();
+                    return $this->redirectToRoute("showConcert", ["id" => $concert->getId()]);
+                } else {
+                    return $this->redirectToRoute("confirmCancelConcert", ["id" => $concertId, "organizerToken" => $organizerToken]);
+            }
+            } else {
+                return $this->redirectToRoute($resp);
+            }
+
     }
 }
