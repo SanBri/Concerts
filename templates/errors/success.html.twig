@@ -1,0 +1,12 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+ 
+ {% if message %}
+    <p>{{ message }}</p>
+ {% else %}
+    <p>Rien à voir ici</p>
+ {% endif %}
+ <a href="{{ path('index') }}">Retour à l'accueil</a>
+
+{% endblock %}

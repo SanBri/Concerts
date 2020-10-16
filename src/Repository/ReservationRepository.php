@@ -19,42 +19,25 @@ class ReservationRepository extends ServiceEntityRepository
         parent::__construct($registry, Reservation::class);
     }
 
-    public function findReservationsByUser($userId)
+    public function findReservationsByUser($userId, $status)
     {
         $qb = $this->createQueryBuilder('r')
-            ->where('r.user = :user')
-            ->setParameter('user', $userId)
+            ->where('r.user = :user', 'r.status = :status')
+            ->setParameters([
+                'user' => $userId,
+                'status' => $status,
+                ])
             ->orderBy('r.id', 'DESC');
         $query = $qb->getQuery();
         return $query->execute();
     }
 
-    // /**
-    //  * @return Reservation[] Returns an array of Reservation objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function findAllReservationsForThisConcert($concert)
     {
-        return $this->createQueryBuilder('r')
-            ->andWhere('r.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('r.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        $qb = $this->createQueryBuilder('r')
+            ->where('r.concert = :concert')
+            ->setParameter('concert', $concert);
+        $query = $qb->getQuery();
+        return $query->execute();
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Reservation
-    {
-        return $this->createQueryBuilder('r')
-            ->andWhere('r.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

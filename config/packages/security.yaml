@@ -2,6 +2,8 @@ security:
     encoders:
         App\Entity\User:
             algorithm: bcrypt
+        App\Entity\ChangePassword:
+            algorithm: bcrypt
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
         users_in_memory: { memory: null }
@@ -20,7 +22,6 @@ security:
             form_login:
                 login_path: login
                 check_path: login
-                # csrf_token_generator: security.csrf.token_manager
             logout:
                 path: logout
                 target: index

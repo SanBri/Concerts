@@ -46,4 +46,6 @@ class ErrorsController extends AbstractController
             'title' => 'Concert annulé',
         ]);
     }
+
+    
 }

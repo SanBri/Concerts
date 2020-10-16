@@ -6,16 +6,21 @@ use DateTime;
 use App\Entity\User;
 use App\Entity\Concert;
 use App\Entity\Reservation;
+use App\Entity\ChangePassword;
 use App\Form\ConcertSearchType;
 use App\Form\CreateConcertType;
+use App\Form\ChangePasswordType;
 use App\Form\CreateReservationType;
+use App\Controller\EmailsController;
 use Doctrine\Persistence\ObjectManager;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints as Assert; 
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class ConcertsController extends AbstractController
 {
@@ -131,14 +136,14 @@ class ConcertsController extends AbstractController
             if ( $actualUserRole == "Organizer" ) {
                 if ( $actualUserId == $userId ) {
                     $concertRepo = $this->getDoctrine()->getRepository(Concert::class);
-                    $coming = "À venir";
-                    $canceled = "Annulé";
-                    $comingConcerts = $concertRepo->findMyConcerts($userId, $coming);
-                    $canceledConcerts = $concertRepo->findMyConcerts($userId, $canceled);
+                    $comingConcerts = $concertRepo->findMyConcerts($userId, 'À venir');
+                    $canceledConcerts = $concertRepo->findMyConcerts($userId, 'Annulé');
+                    $pastConcerts = $concertRepo->findMyConcerts($userId, 'Passé');
                     return $this->render('concerts/myConcertsList.html.twig', [
                         'title' => 'Mes concerts',
                         'concerts' => $comingConcerts,
-                        'canceledConcerts' => $canceledConcerts
+                        'canceledConcerts' => $canceledConcerts,
+                        'pastConcerts' => $pastConcerts
                     ]);
                 } else {
                     return $this->redirectToRoute('myConcertsList', ['userId' => $actualUserId] );
@@ -225,14 +230,32 @@ class ConcertsController extends AbstractController
     /**
      * @Route("/concerts", name="concertsList")
      */
-    public function concertsList(Request $request)
+    public function concertsList(Request $request, ObjectManager $manager, PaginatorInterface $paginator)
     {
-        
-        $status = 'À venir';
         $query = false;
         $title = "Liste des concerts";
         $concertRepo = $this->getDoctrine()->getRepository(Concert::class);
-        $concerts = $concertRepo->findComingConcerts($status);
+        $datas = $concertRepo->findComingConcerts('À venir');
+        $concerts = $paginator->paginate($datas, $request->query->getInt('page', 1), 8);
+        //* Actualise le statut des événements déjà passés :
+        date_default_timezone_set("Europe/Paris");
+        $date = time();
+        foreach ($datas as $concert) {
+            $concertDate = $concert->getDate();
+            $concertDateTimestamp = $concertDate->getTimestamp();
+            $concertId = $concert->getId();
+            if ($concertDateTimestamp < $date) {
+                $concert->setStatus('Passé');
+                $manager->persist($concert);
+                $reservationRepo = $this->getDoctrine()->getRepository(Reservation::class);
+                $reservations = $reservationRepo->findAllReservationsForThisConcert($concertId); 
+                foreach ($reservations as $reservation) {
+                    $reservation->setStatus('Passé');
+                    $manager->persist($reservation);
+                }
+                $manager->flush();
+            }
+        }
         $form = $this->createForm(ConcertSearchType::class);
         $form->handleRequest($request);
 
@@ -254,7 +277,7 @@ class ConcertsController extends AbstractController
     /**
      * @Route("/concert/{id}", name="showConcert")
      */
-    public function show($id, Request $request, ObjectManager $manager)
+    public function show($id, Request $request, ObjectManager $manager, EmailsController $emailsCtlr)
     {
         
         $concertRepo = $this->getDoctrine()->getRepository(Concert::class);
@@ -273,15 +296,16 @@ class ConcertsController extends AbstractController
                 $formDatasPlaces = $form->get('reservedPlaces')->getData();
                 if ($formDatasPlaces <= $remainingPlaces) {
                     $reservation->setUser($this->getUser())
-                                ->setConcert($concert);
+                                ->setConcert($concert)
+                                ->setMailSent(false)
+                                ->setStatus('En cours');
                     $manager->persist($reservation);
                     $manager->flush();
                     $reservedPlaces = $reservation->getReservedPlaces();
                     $concert->setReservation($concertReservations + $reservedPlaces);
                     $manager->persist($concert);
                     $manager->flush();
-                    $user = $this->getUser();
-                    return $this->redirectToRoute("reservationsList", ['userId' => $user->getId()]);
+                    return $this->redirectToRoute("sendReservationConfirmationEmail", ['reservationId' => $reservation->getId()]);
                 } else {
                     $notEnoughPlaces = "Il n'y a pas assez de place disponible";
                 }
@@ -332,24 +356,30 @@ class ConcertsController extends AbstractController
      */
     public function cancelConcert(Concert $concert = null, $organizerToken, $confirmToken, ObjectManager $manager)
     {
-            if ($concert) {
-                $concertId = $concert->getId();
+        if ($concert) {
+            $concertId = $concert->getId();
+        } else {
+            $concertId = null;
+        }
+        $resp = $this->isUserTheOrganizer($concertId, $organizerToken);
+        if ($resp === true) {
+            if ( $this->isCsrfTokenValid($concertId, $confirmToken) ) {
+                $concert->setStatus('Annulé');
+                $reservationRepo = $this->getDoctrine()->getRepository(Reservation::class);
+                $reservations = $reservationRepo->findAllReservationsForThisConcert($concertId); 
+                foreach ($reservations as $reservation) {
+                    $reservation->setStatus('Annulé');
+                    $manager->persist($reservation);
+                }
+                $manager->persist($concert);
+                $manager->flush();
+                return $this->redirectToRoute("showConcert", ["id" => $concert->getId()]);
             } else {
-                $concertId = null;
-            }
-            $resp = $this->isUserTheOrganizer($concertId, $organizerToken);
-            if ($resp === true) {
-                if ( $this->isCsrfTokenValid($concertId, $confirmToken) ) {
-                    $concert->setStatus('Annulé');
-                    $manager->persist($concert);
-                    $manager->flush();
-                    return $this->redirectToRoute("showConcert", ["id" => $concert->getId()]);
-                } else {
-                    return $this->redirectToRoute("confirmCancelConcert", ["id" => $concertId, "organizerToken" => $organizerToken]);
-            }
-            } else {
-                return $this->redirectToRoute($resp);
-            }
-
+                return $this->redirectToRoute("confirmCancelConcert", ["id" => $concertId, "organizerToken" => $organizerToken]);
+        }
+        } else {
+            return $this->redirectToRoute($resp);
+        }
     }
+
 }

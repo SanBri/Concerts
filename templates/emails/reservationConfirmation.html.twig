@@ -1,0 +1,7 @@
+{% block title %}Confirmation de votre réservation{% endblock %}
+
+{% block body %}
+
+Votre réservation {{reservation.id}} au nom de {{reservation.user.email}} pour le concert {{reservation.concert.name}} bien été validée ( {{ reservation.mailSent }}). 
+
+{% endblock %}

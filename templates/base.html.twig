@@ -16,9 +16,14 @@
                 <a href="{{ path("concertsList") }}">Retour aux concerts</a> |                
             {% endif %}
             {% if app.user %}
+                <a href="{{ path('myAccount', {'userId': app.user.id}) }}">Mon compte</a> |
                 <a href="{{ path("logout") }}">Déconnexion</a>
             {% else %}
-                <a href="{{ path("login") }}">Connexion</a>
+                {% if app.request.get('_route') != 'login' %}
+                    <a href="{{ path("login") }}">Connexion</a>
+                {% else %}
+                    <a href="{{ path("register") }}">Inscription</a>
+                {% endif %}
             {% endif %}
             <hr />
         </p>

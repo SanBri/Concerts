@@ -8,6 +8,11 @@
 
 {% block body %}
 
+    {% for message in app.flashes('wrongPassword') %}
+        <strong>{{ message }}</strong>
+    {% endfor %}</p>
+
+
 <section>
     {% if app.user and app.user.id == concert.organizer.id and concert.status == "À venir" %}
         {% set organizerToken = csrf_token('concert-organizer') %}
@@ -22,7 +27,7 @@
 
     {% if concert.status != "Annulé" %}
 
-        <p>Date : {{ concert.date | date('d/m/Y') }} à {{ concert.date | date('h:i', 'Europe/Paris') }}</p>
+        <p>Date : {{ concert.date | date('d-m-Y h:i:s') }} à {{ concert.date | date('h:i', 'Europe/Paris') }}</p>
 
         <p>Prix : {{ price }}{% if price != "Gratuit" %}€{% endif %}</p>
         

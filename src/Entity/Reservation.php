@@ -37,6 +37,16 @@ class Reservation
      */
     private $reservedPlaces;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $mailSent;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $status;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -74,6 +84,30 @@ class Reservation
     public function setReservedPlaces(int $reservedPlaces): self
     {
         $this->reservedPlaces = $reservedPlaces;
+
+        return $this;
+    }
+
+    public function getMailSent(): ?bool
+    {
+        return $this->mailSent;
+    }
+
+    public function setMailSent(bool $mailSent): self
+    {
+        $this->mailSent = $mailSent;
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): self
+    {
+        $this->status = $status;
 
         return $this;
     }

@@ -13,38 +13,33 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class ReservationsController extends AbstractController
 {
 
+
     /**
      * @Route("/reservations/{userId}", name="reservationsList")
      */
     public function reservationsList($userId)
     {
-        $actualUser = $this->getUser();
-        if ($actualUser != NULL) {
-            $actualUserId = $actualUser->getId();
-        } else {
-            return $this->redirectToRoute('login');
-        }
-
-        if ($userId == $actualUserId) {
+        $resp = $this->isTheSameUser('reservationsList', $userId);
+        if ($resp === true) {
             $reservationRepo = $this->getDoctrine()->getRepository(Reservation::class);
-            $reservations = $reservationRepo->findReservationsByUser($userId);
+            $reservations = $reservationRepo->findReservationsByUser($userId, 'À venir');
             return $this->render('reservations/reservationsList.html.twig', [
                 'title' => 'Mes réservations',
                 'reservations' => $reservations
             ]);
         } else {
-            return $this->redirectToRoute('reservationsList', ['userId' => $actualUserId] );
+            return $resp;
         }
     }
 
     public function isUserAuthorisedToCancelReservation($reservationId, $submittedToken) {
-
         $actualUser = $this->getUser();
         if ($actualUser != NULL) {
                 $actualUserId = $actualUser->getId();
                 $reservationRepo = $this->getDoctrine()->getRepository(Reservation::class);
                 $reservation = $reservationRepo->find($reservationId);
-            if ($reservation) {
+                $reservationStatus = $reservation->getStatus();
+            if ($reservation && $reservationStatus == 'Confirmé') {
                 $reservationUser = $reservation->getUser();
                 $reservationUserId = $reservationUser->getId();
                 if ($reservationUserId == $actualUserId && $this->isCsrfTokenValid('cancel-reservation', $submittedToken) ) {
@@ -61,7 +56,7 @@ class ReservationsController extends AbstractController
         return $resp;
     }
 
-        /**
+    /**
      * @Route("/confirmation_annulation_reservation/{reservationId}/{submittedToken}", name="confirmReservationCancel")
      */
     public function confirmReservationCancel($reservationId, $submittedToken)
@@ -91,10 +86,12 @@ class ReservationsController extends AbstractController
             $concertReservations = $concert->getReservation();
             $reservedPlaces = $reservation->getReservedPlaces();
             $concert->setReservation($concertReservations - $reservedPlaces);
-            $manager->remove($reservation);
+            $reservation->setStatus('Annulé');
+            $manager->persist($reservation);
             $manager->flush();
-            return $this->render('reservations/canceledReservation.html.twig', [
-                'title' => 'Réservation annulée',
+            return $this->render('errors/success.html.twig', [
+                'title' => 'Confirmation',
+                'message' => 'Votre réservation a bien été annulée'
             ]);
         } else {
             return $this->redirectToRoute($resp);

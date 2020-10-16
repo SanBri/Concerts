@@ -13,13 +13,16 @@
       <strong>Date :</strong> {{ reservation.concert.date | date('d/m/Y') }}<br />
       <strong>Nombre de places réservées :</strong> {{ reservation.reservedPlaces }}</p>
       <p><a href="{{ path('showConcert', {'id' : reservation.concert.id}) }}"><input type="button" value="Voir le concert"></a>
-      <a href="{{ path('confirmReservationCancel', {'reservationId': reservation.id, 'submittedToken': submittedToken}) }}"><input type="button" value="Annuler la réservation"></a></p>
+      {% if reservation.status == 'Confirmé' %}
+          <a href="{{ path('confirmReservationCancel', {'reservationId': reservation.id, 'submittedToken': submittedToken}) }}"><input type="button" value="Annuler la réservation"></a></p>
+      {% endif %}
       <hr />
     {% endfor %}
  {% else %}
       <p>Vous n'avez pas de réservation</p>    
       <p><a href="{{ path('concertsList') }}">Voir les concerts</a></p>
  {% endif %}
+
 </section>
 
 {% endblock %}

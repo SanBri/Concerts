@@ -30,6 +30,9 @@
       {% endif %}
       </p>
     {% endfor %}
+    {% if query == false %}
+      {{ knp_pagination_render(concerts) }}
+    {% endif %}
   {% else %}
     <p>Il n'y a aucun concert prévu</p>
   {% endif %}

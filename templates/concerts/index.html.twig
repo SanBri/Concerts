@@ -6,7 +6,7 @@
     {% if not app.user %}
         <li><a href="{{ path("register") }}">Inscription</a></li>
     {% else %}
-        <li><a href="{{ path("reservationsList", {'userId' : app.user.id}) }}">Mes réservations</a></li>
+        <li><a href="{{ path("reservationsList", {'userId': app.user.id}) }}">Mes réservations</a></li>
     {% endif %}
     <li><a href="{{ path("concertsList")}}">Liste des concerts</a></li>
     {% if app.user and app.user.role == 'Organizer' %}
