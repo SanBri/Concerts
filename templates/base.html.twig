@@ -2,35 +2,57 @@
 <html>
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width initial-scale=1.0">
         <title>{% block title %} {{ title }} {% endblock %}</title>
-        {% block stylesheets %}{% endblock %}
+        {% block stylesheets %} 
+            <link rel="stylesheet" href="{{ asset('css/style.css') }} ">
+            <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+        {% endblock %}
     </head>
     <body>
-
         <header>
-        <p>
-            {% if app.request.get('_route') != 'index' %} 
-                <a href="{{ path("index") }}">Index</a> |
-            {% endif %}
-            {% if app.request.get('_route') == 'showConcert' %}
-                <a href="{{ path("concertsList") }}">Retour aux concerts</a> |                
-            {% endif %}
-            {% if app.user %}
-                <a href="{{ path('myAccount', {'userId': app.user.id}) }}">Mon compte</a> |
-                <a href="{{ path("logout") }}">Déconnexion</a>
-            {% else %}
-                {% if app.request.get('_route') != 'login' %}
-                    <a href="{{ path("login") }}">Connexion</a>
-                {% else %}
-                    <a href="{{ path("register") }}">Inscription</a>
-                {% endif %}
-            {% endif %}
-            <hr />
-        </p>
+            <div class="container__header">
+                    <div class="header__home">
+                        {% if app.request.get('_route') != 'index' %} 
+                            <a href="{{ path("index") }}"><i class="fas fa-home"></i></a>
+                        {% endif %}
+                    </div>
+                    {% if app.user %}
+                        <div class="header__user-parameters">
+                            <i class="fas fa-user" id="userIcon"></i>
+                            <i class="fas fa-user" id="activeUserIcon"></i>
+                        </div>
+                        <div class="user-parameters--active">
+                            <p>{{ app.user.email}}</p>
+                            <div></div>
+                            <li><a href="{{ path('myAccount', {'userId': app.user.id}) }}">Mon compte</a></li>
+                            <li><a href="{{ path("reservationsList", {'userId': app.user.id}) }}">Mes réservations</a></li>
+                            {% if app.user and app.user.role == 'Organizer' %}
+                                <li><a href="{{ path("myConcertsList", {'userId' : app.user.id}) }}">Mes concerts</a></li>
+                                <li><a href="{{ path("createConcert")}}">Créer un concert</a></li>
+                            {% endif %}
+                            <li><a href="{{ path("logout") }}">Déconnexion</a></li>
+                        </div>
+                    {% else %}
+                        <div class="header__login">
+                            {% if app.request.get('_route') != 'login' %}
+                                <a href="{{ path("login") }}" class="btn"><i class="fas fa-user"></i> Connexion</a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+            </div>
         </header>
-
-        <h1>{{ title }}</h1>
-        {% block body %}{% endblock %}
-        {% block javascripts %}{% endblock %}
-    </body>
+        <div class="container__body">
+            {% block body %}{% endblock %}
+        </div>
+        <div class="container__footer">
+            <footer>
+                <p>Ceci est le footer</p>
+            </footer>
+        </div>
+    </div>
+    {% block javascripts %}
+        <script src="{{ asset('js/UserMenu.js') }}"></script>
+        <script src="{{ asset('js/MyEvents.js') }}"></script>
+    {% endblock %}
 </html>

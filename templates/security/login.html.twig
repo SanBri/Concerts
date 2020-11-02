@@ -2,16 +2,28 @@
 
 {% block body %}
 
-{% if not app.user %}
-    <section>
-        <form action="{{ path("login") }}" method="post">
-            <p><input type="text" required placeholder="Adresse e-mail" name="_username"></p>
-            <p><input type="password" required placeholder="Mot de passe" name="_password"></p>
-            <input type="submit" value="Envoyer">
-        </form>
-    </section>
-{% else %}
-    <p>Vous êtes déjà connecté.</p>
-{% endif %}
+<section><div class="login-block">
+    <div class="login-block__ title">
+        <h2>Connexion</h2>
+        <div class="create-block__ title--line"></div>
+    </div>
+    {% if not app.user %}
+
+            <div class="login-block__form">
+                <form action="{{ path("login") }}" method="post">
+                    <p><i class="fas fa-user"></i><input type="text" required placeholder="Adresse e-mail" name="_username"></p>
+                    <p><i class="fas fa-lock"></i><input type="password" required placeholder="Mot de passe" name="_password"></p>
+                    <input class="login-block__button" type="submit" value="Envoyer">
+                </form>
+                <p><a href="">J'ai oublié mon mot de passe</a></p>
+                <p><a href="{{ path('register') }}">Créer un compte</a></p>
+            </div>
+    {% else %}
+        <div class="login-block__form">
+            <p>Vous êtes déjà connecté</p>
+            <a href="{{ path("concertsList") }}"><input class="login-block__button" type="submit" value="Retour"></a>
+        </div>
+    {% endif %}
+</div></section>
 
 {% endblock %}

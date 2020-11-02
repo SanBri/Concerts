@@ -12,8 +12,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ReservationsController extends AbstractController
 {
-
-
     /**
      * @Route("/reservations/{userId}", name="reservationsList")
      */
@@ -22,7 +20,7 @@ class ReservationsController extends AbstractController
         $resp = $this->isTheSameUser('reservationsList', $userId);
         if ($resp === true) {
             $reservationRepo = $this->getDoctrine()->getRepository(Reservation::class);
-            $reservations = $reservationRepo->findReservationsByUser($userId, 'À venir');
+            $reservations = $reservationRepo->findReservationsByUser($userId, 'Confirmé');
             return $this->render('reservations/reservationsList.html.twig', [
                 'title' => 'Mes réservations',
                 'reservations' => $reservations

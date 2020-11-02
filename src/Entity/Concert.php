@@ -22,32 +22,38 @@ class Concert
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message = "Veuillez préciser le nom de l'événement")
      */
     private $name;
 
     /**
      * @ORM\Column(type="text")
+     * @Assert\NotBlank(message = "Veuillez entrer une description de l'événement")
      */
     private $description;
 
     /**
      * @ORM\Column(type="datetime")
      * @Assert\GreaterThanOrEqual("today", message="La date est déjà passée")
+     * @Assert\NotBlank(message = "Veuillez préciser la date de l'événement")
      */
     private $date;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message = "Veuillez préciser la ville de l'événément")
      */
     private $city;
 
     /**
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="string")
+     * @Assert\NotBlank(message = "Veuillez préciser l'adresse de l'événement")
      */
     private $adress;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Assert\NotBlank(message = "Veuillez préciser un prix (0 si l'événement est gratuit)")
      * @Assert\Range(
      *      min = 0,
      *      max = 9999,
@@ -58,6 +64,7 @@ class Concert
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotBlank(message = "Veuillez préciser le nombre de places maximum disponibles")
      * @Assert\GreaterThanOrEqual(propertyPath="reservation", message="Le nombre de places ne peut pas être inférieur aux réservations déjà effectuées !")
      * @Assert\Range(
      *      min = 1,
@@ -87,6 +94,11 @@ class Concert
      * @ORM\JoinColumn(nullable=false)
      */
     private $organizer;
+
+    /**
+     * @ORM\Column(type="string", length=500, nullable=true)
+     */
+    private $imagePath;
 
     public function __construct()
     {
@@ -245,6 +257,18 @@ class Concert
     public function setOrganizer(?User $organizer): self
     {
         $this->organizer = $organizer;
+
+        return $this;
+    }
+
+    public function getImagePath(): ?string
+    {
+        return $this->imagePath;
+    }
+
+    public function setImagePath(?string $imagePath): self
+    {
+        $this->imagePath = $imagePath;
 
         return $this;
     }

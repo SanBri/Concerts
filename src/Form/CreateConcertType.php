@@ -6,6 +6,7 @@ use App\Entity\Concert;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
@@ -23,6 +24,10 @@ class CreateConcertType extends AbstractType
             ->add('adress')
             ->add('price', IntegerType::class)
             ->add('maxPlaces', IntegerType::class)
+            ->add('imagePath', FileType::class, [
+                'required' => false,
+                'data_class' => null
+            ])
         ;
         if ( strpos($url,'edit') === false ) { 
             $builder

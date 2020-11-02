@@ -2,54 +2,67 @@
 
 {% block body %}
 
- <section> {# CONCERTS À VENIR #}
-    {% if concerts %}
+    <section><div class="btn-block">
+        <input type="button" class="btn currentBtn" id="coming-events-btn" value="Événements à venir">
+        <input type="button" class="btn" id="canceled-events-btn" value="Événements annulés">
+        <input type="button" class="btn"  id="passed-events-btn" value="Événements passés">
+   </div></section>
 
-        <h2>À venir</h2>
-
-        {% for concert in concerts %}
-            {% if concert.reservation == null %}
-                {% set reservations = 0 %}
-            {% else %}
-                {% set reservations = concert.reservation %}
-            {% endif %}
-
-            <p><a href="{{ path('showConcert', {'id': concert.id}) }} ">{{ concert.id }} - {{ concert.name }} - {{concert.date | date('d/m/Y')}}</a>
-            
-            {% set organizerToken = csrf_token('concert-organizer') %}
-            <a href="{{ path('editConcert', {'id': concert.id, 'organizerToken': organizerToken}) }}"><input type="button" value="Modifier"></a>
-            <a href="{{ path('changeConcertDate', {'id': concert.id, 'organizerToken': organizerToken}) }}"><input type="button" value="Reporter"></a>
-            <a href="{{ path('confirmCancelConcert', {'id': concert.id, 'organizerToken': organizerToken}) }}"><input type="button" value="Annuler"></a>
-            <br />    
-            <em>({{reservations}}/{{concert.maxPlaces}} réservation{% if reservations > 1 %}s{% endif %})</em></p>
-        {% endfor %} 
-
-    {% else %}
-        <p>Vous n'avez pas de concert à venir</p>
-    {% endif %}
- </section> {# FIN CONCERTS À VENIR #}
-
- <section> {# CONCERTS ANNULÉS #}
-    {% if canceledConcerts %}
-
-        <h2>Concerts annulés</h2>
-
-        {% for canceledConcert in canceledConcerts %}
-            <p><a href="{{ path('showConcert', {'id': canceledConcert.id}) }} ">{{ canceledConcert.id }} - {{ canceledConcert.name }} - {{canceledConcert.date | date('d/m/Y')}}</a>
-        {% endfor %}
-
-    {% endif %}
- </section> {# FIN CONCERTS ANNULÉS #}
-
- <section> {# CONCERTS PASSÉS #}
-    {% if pastConcerts %}
-        <h2>Concerts passés</h2>
+    <section><div class="coming-events-block main"> {# CONCERTS À VENIR #}
+        {% if concerts %}
+            <div class="title">
+                <h2>À venir</h2>
+                <div class="title--line"></div>
+            </div>
+            {% for concert in concerts %}
+                <div class="each-block">
+                    {% if concert.reservation == null %}
+                        {% set reservations = 0 %}
+                    {% else %}
+                        {% set reservations = concert.reservation %}
+                    {% endif %}
+                    <div class="title">
+                        <h3><a href="{{ path('showConcert', {'id': concert.id}) }} ">{{ concert.name }}</h3>
+                        <div class="title--line"></div>
+                    </div>
+                    <p>{{concert.date | date('d/m/Y')}}</a></p>
+                    <p>({{reservations}}/{{concert.maxPlaces}} réservation{% if reservations > 1 %}s{% endif %})</p>
+                    <div class="each-block__button">
+                        {% set organizerToken = csrf_token('concert-organizer') %}
+                        <a href="{{ path('editConcert', {'id': concert.id, 'organizerToken': organizerToken}) }}"><input type="button" class="btn" value="Modifier"></a>
+                        <a href="{{ path('changeConcertDate', {'id': concert.id, 'organizerToken': organizerToken}) }}"><input type="button" class="btn" value="Reporter"></a>
+                        <a href="{{ path('confirmCancelConcert', {'id': concert.id, 'organizerToken': organizerToken}) }}"><input type="button" class="btn" value="Annuler"></a>   
+                    </div>      
+                </div>       
+            {% endfor %} 
+        {% else %}
+            <p>Vous n'avez pas de concert à venir</p>
+        {% endif %}
+    </div></section> {# FIN CONCERTS À VENIR #}
     
-        {% for pastConcert in pastConcerts %}
-            <p><a href="{{ path('showConcert', {'id': pastConcert.id}) }} ">{{ pastConcert.id }} - {{ pastConcert.name }} - {{pastConcert.date | date('d/m/Y')}}</a>
-        {% endfor %}
-
-    {% endif %}
- </section> {# FIN CONCERTS PASSÉS #}
+    {% if canceledConcerts %} {# CONCERTS ANNULÉS #}
+        <section><div class="canceled-events-block main"> 
+            <div class="title">
+                <h2>Événements annulés</h2>
+                <div class="title--line"></div>
+            </div>
+            {% for canceledConcert in canceledConcerts %}
+                <p><a href="{{ path('showConcert', {'id': canceledConcert.id}) }} ">{{ canceledConcert.name }} - {{canceledConcert.date | date('d/m/Y')}}</a>
+            {% endfor %}
+        </div></section> 
+    {% endif %} {# FIN CONCERTS ANNULÉS #}
+    
+    {% if pastConcerts %} {# CONCERTS PASSÉS #}
+        <section><div class="passed-events-block main"> 
+            <div class="title">
+                <h2>Événements passés</h2>
+                <div class="title--line"></div>
+            </div>            
+            {% for pastConcert in pastConcerts %}
+                <p><a href="{{ path('showConcert', {'id': pastConcert.id}) }} ">{{ pastConcert.name }} - {{pastConcert.date | date('d/m/Y')}}</a>
+            {% endfor %}
+        </div></section> 
+    {% endif %} {# FIN CONCERTS PASSÉS #}
 
 {% endblock %}
+

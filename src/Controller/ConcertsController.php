@@ -6,6 +6,7 @@ use DateTime;
 use App\Entity\User;
 use App\Entity\Concert;
 use App\Entity\Reservation;
+use App\Service\FileUploader;
 use App\Entity\ChangePassword;
 use App\Form\ConcertSearchType;
 use App\Form\CreateConcertType;
@@ -15,6 +16,7 @@ use App\Controller\EmailsController;
 use Doctrine\Persistence\ObjectManager;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints as Assert; 
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -47,7 +49,7 @@ class ConcertsController extends AbstractController
      * @Route("/create", name="createConcert")
      * @Route("/edit/{id}/{organizerToken}", name="editConcert")
      */
-    public function concertForm($organizerToken = null, Concert $concert = null, Request $request, ObjectManager $manager)
+    public function concertForm($organizerToken = null, Concert $concert = null, Request $request, ObjectManager $manager, FileUploader $fileUploader)
     {
         $user = $this->getUser();
 
@@ -55,12 +57,13 @@ class ConcertsController extends AbstractController
             $userRole = $user->getRole();
             $userId = $user->getId();
             $title = "Modifier les informations";
+            $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
 
             if ( $userRole == 'Organizer' ) {
                 if (!$concert) {
+                    $currentImage = null;
                     $concert = new Concert();
                     $title = "Ajouter un concert";
-                    $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                     if (strpos($url, 'edit')) {
                         return $this->redirectToRoute('unknownConcert');
                     }
@@ -72,11 +75,35 @@ class ConcertsController extends AbstractController
                         return $this->redirectToRoute('error403');
                     } else if ( $concertStatus == "Annulé" ) {
                         return $this->redirectToRoute('canceledConcert');
+                    } else {
+                        if (strpos($url, 'edit')) {
+                            $currentImage = $concert->getImagePath();
+                            if ($currentImage) {
+                            $concert->setImagePath(
+                                new File($this->getParameter('concerts_images_directory').'/'.$currentImage)
+                                ); // Paramètre pour que le form d'édition puisse ressortir l'image sans erreur
+                            }
+                        }
                     }
                 }
                 $form = $this->createForm(CreateConcertType::class, $concert);
                 $form->handleRequest($request);
                 if ($form->isSubmitted() && $form->isValid()) {
+                    $formDataImage = $form->get('imagePath')->getData();
+                    if ($formDataImage) {
+                        $resp = $fileUploader->uploadedImageCheck($formDataImage);
+                        $validImage = is_array($resp);
+                        if ($validImage) {
+                            if ($currentImage) { // Supprimer l'ancienne image s'il y en a une
+                                $oldImage = $fileUploader->getTargetDirectory().'/'.$currentImage;
+                                unlink($oldImage);
+                            }
+                            $imageNewName = $resp[1];
+                            $concert->setImagePath($imageNewName);
+                        } else {
+                            exit($resp);
+                        }
+                    }
                     $concert->setStatus('À venir');
                     $concert->setOrganizer($user);
                     $manager->persist($concert);
@@ -87,6 +114,7 @@ class ConcertsController extends AbstractController
                     'title' => $title,
                     'createForm' => $form->createView(),
                     'editMode' => $concert->getId() !== null,
+                    'currentImage' => $currentImage,
                     'concertId' => $concert->getId()
                 ]);
             } else {
@@ -262,7 +290,7 @@ class ConcertsController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $queryConcerts = $form->get('concertsQuery')->getData();
             $concerts = $concertRepo->findConcertSearch($queryConcerts);
-            $title = ' Recherche de concerts : ' . $queryConcerts . '';
+            $title = 'Recherche : ' . $queryConcerts;
             $query = true;
         }
         
@@ -326,7 +354,6 @@ class ConcertsController extends AbstractController
         } else {
             return $this->redirectToRoute("unknownConcert");
         }
-
     }
 
     /**

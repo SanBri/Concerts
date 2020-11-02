@@ -1,0 +1,622 @@
+/* RESET START */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul, li {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+/* RESET END */
+
+/* GENERAL */
+
+.container__body {
+	/* background-color: rgb(181, 129, 185); */
+	background-color: rgba(83, 83, 83, 0.4);
+	padding: 5px;
+	line-height: 1.5;
+	min-height: 100vh;
+	margin-top: 50px;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-ms-box-sizing: border-box;
+	-o-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.container__footer {
+	height: 300px;
+	background-color: orange;
+}
+
+.main {
+	padding: 20px;
+	width: 80%;
+	margin: 50px auto;
+	border: solid 0.5px black;
+	border-radius: 5px;
+	text-align: center;
+	background-color: rgb(181, 129, 185);
+}
+
+a {
+	text-decoration: none;
+}
+.title {
+	font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+	font-size: 1.8rem;
+	color: purple;
+	transition: 0.20s;
+	display: inline-block;
+}
+.title--line {
+	border-bottom: 3px solid purple;
+	width: 30%;
+	margin: 0 0 10px 10px;
+	transition: 0.45s;
+}
+.title:hover .title--line {
+	width: 90%;
+}
+
+.btn-block {
+	margin: 20px auto;
+	text-align: center;
+}
+.btn {
+	background: rgb(137, 78, 143);
+	color: white;
+	outline: none;
+	border: none;
+	cursor: pointer;
+	padding: 10px;
+	border-radius: 5%;
+	transition: 0.25s;
+	font-family: "Roboto";
+}
+.btn:hover {
+	background: purple;
+	transition: 0.25s;
+}
+
+.currentBtn {
+	background: purple;
+	cursor: initial;
+}
+
+.each-block {
+	width: 50%;
+	border-radius: 10px;
+	margin: 5px auto;
+	padding: 5px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	background-color: rgba(104, 93, 104, 0.2);
+}
+.each-block a {
+	text-decoration: none;
+}
+.each-block:hover {
+	background-color: rgba(104, 93, 104, 0.5);
+}
+.each-block:hover .title--line {
+	width: 90%;
+}
+
+/* HEADER */
+.container__header {
+	position: fixed;
+	width: 100%;
+	top: 0;
+	z-index: 9999;
+	border-bottom: solid 0.5px black;
+	background-color: white;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	padding: 8px;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-ms-box-sizing: border-box;
+	-o-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.header__login {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	padding-right: 5px;
+	width: 80%;
+	text-align: center;
+	font-size: 1em;
+}
+.header__login a {
+	color: white;
+}
+.header__home {
+	width: 98%;
+	padding-left: 130px;
+	display: flex;
+	align-items: center;
+}
+.header__home a {
+	color: rgb(181, 129, 185);
+}
+.header__user-parameters {
+	width: 2%;
+	padding-right: 130px;
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+}
+.container__header i {
+	font-size: 2em;
+	cursor: pointer;
+	color: rgba(128, 0, 128, 0.6);
+}
+.container__header i:hover {
+	color: purple;
+	transition: 0.25s;
+}
+#activeUserIcon {
+	display: none;
+}
+
+.user-parameters--active {
+	width: 290px;
+	display: none;
+	flex-direction: column;
+	align-items: center;
+	position: absolute;
+	right: 10px;
+	top: 52px;
+	z-index: 9999;
+	padding: 10px;
+	background-color: purple;
+	color: white;
+	font-size: 1em;
+	line-height: 1.4em;
+	border: solid 0.5px black;
+}
+.user-parameters--active a{
+	color: white;
+}
+.user-parameters--active a:hover{
+	color: rgb(181, 129, 185);
+}
+
+/* LOGIN & REGISTER */
+.login-block {
+	width: 25%;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	color: purple;
+	padding: 100px;
+	background-color: rgba(70, 69, 70, 0.1);
+	border: 1px solid rgba(70, 69, 70, 0.1);
+}
+
+.login-block__title {
+	width: 120px;
+	font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+	font-size: 2rem;
+	color: purple;
+	border-bottom: purple 3px solid;
+	margin-bottom: 10px;
+	transition: 0.20s;
+}
+.login-block__title:hover {
+	width: 200px;
+	border-bottom-color: indigo;
+	color: indigo;
+}
+
+.login-block__form {
+	width: 100%;
+	overflow: hidden;
+	font-size: 20px;
+}
+
+.login-block__form input {
+	width: 60%;
+	background: none;
+	border: none;
+	outline: none;
+	padding: 8px 0;
+	margin: 18px 0 18px 10px;
+	font-size: 18px;
+	color: purple;
+	border-bottom: 0.5px solid purple;
+	transition: 0.25s;
+}
+.login-block__form input:focus {
+	width: 80%;
+	border-bottom: 1px solid indigo;
+	color: indigo;
+}
+
+.login-block__form input[type=submit] {
+	width: 95%;
+	color: purple;
+	cursor: pointer;
+	font-weight: bold;
+	margin-top: 20px;
+	transition: 0.25s;
+	border: 1px solid purple;
+}
+.login-block__form input[type=submit]:hover {
+	color: indigo;
+	border: 1px solid indigo;
+	transition: 0.25s;
+}
+
+/* EVENTS LIST */
+
+.events-list-block a {
+	text-decoration: none;
+}
+
+.search-event-block {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+.search-event-block__form {
+	width: 50%;
+	position: relative;
+	margin: auto;
+	text-align: center;
+	margin-bottom: 10px;
+}
+
+#concert_search_concertsQuery {
+	width: 100%;
+	padding: 20px;
+	padding-right: 60px;
+	box-sizing: border-box;
+	background: rgba(0,0,0,0.3);
+	border: 2px solid white;
+	border-radius: 10px;
+	font-family: 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+	font-size: 18px;
+	font-style: italic;
+	color: white;
+	outline: none;
+	transition: 0.35s;
+}
+#concert_search_concertsQuery::-webkit-input-placeholder{
+	color: white;
+}
+#concert_search_concertsQuery::-moz-placeholder{
+	color: white;
+}
+#concert_search_concertsQuery::-ms-placeholder{
+	color: white;
+}
+#concert_search_concertsQuery:focus {
+	transition: 0.35s;
+	border-color: indigo;
+}
+
+.fa-search {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	right: 10px;
+	color: white;
+	font-size: 25px;
+}
+
+.all-events {
+	width: 50%;
+	margin: auto;
+	padding: 20px 0;
+	display: flex;
+	flex-direction: column;
+	justify-items: center;
+	align-items: center;
+	background-color: rgb(181, 129, 185);
+}
+
+.each-event {
+	min-width: 500px;
+	max-width: 500px;
+	border-radius: 10px;
+	margin: 5px 0;
+	padding: 5px;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	background-color: rgba(104, 93, 104, 0.2);
+	cursor: pointer;
+}
+
+.each-event__image {
+	margin-right: 20px;
+}
+
+.each-event-content {
+	display: flex;
+	flex-direction: column;
+}
+.each-event a {
+	color: purple;
+}
+.each-event:hover * {
+	color: indigo;
+}
+.each-event:hover .title--line {
+	transition: 0.45s;
+	border-bottom-color: indigo;
+	width: 90%;
+}
+
+.each-event-content__title {
+	width: 100%;
+	font-size: 2em;
+	margin-bottom: 20px;
+}
+.each-event-content__title--line {
+	border-bottom: 3px solid purple;
+	width: 30%;
+	margin-left: 10px;
+	transition: 0.45s;
+}
+
+#full-reservations {
+	color: rgb(148, 39, 39);
+	font-weight: bold;
+	font-size: 1.1em;
+	text-align: center;
+}
+
+/* SHOW EVENT */
+
+.event-content {
+	display: flex;
+	min-height: 95vh;
+	flex-direction: row; 
+	justify-content: space-between;
+	border: solid 1px black;
+	text-align: center;
+	position: relative;
+}
+
+.event-description {
+	width: 60%;
+	padding: 10px;
+	border-right: 0.5px solid black;
+	text-align: center;
+	padding: 0 30px;
+}
+.event-description:hover .title--line {
+	width: 90%;
+}
+
+.event-sides-block {
+	width: 40%;
+	height: 95vh;
+	display: flex;
+	flex-direction: column;
+	box-sizing: border-box;
+}
+
+.event-side-block {
+	display: flex;
+	flex-direction: column;
+	margin: auto;
+	width: 80%;
+	padding: 20px;
+	border-radius: 10px;
+	background-color: rgba(104, 93, 104, 0.2);
+}
+.event-side-block:hover .title--line {
+	transition: 0.45s;
+	width: 90%;
+}
+
+.event-side-block__text p {
+	line-height: 2;
+}
+
+.event-reservations input[type="number"] {
+	border-radius: 10px;
+	background: rgb(181, 129, 185);
+	outline: none;
+	border: none;
+	color: white;
+	transition: 0.35s;
+	padding: 5px;
+	width: 15%;
+}
+.event-reservations input[type="number"]:focus {
+	border: 1px solid indigo;
+	background-color: purple;
+	transition: 0.15s;
+}
+
+
+/* EVENT CREATE/EDIT FORM */
+
+.create-block {
+	width: 70%;
+	color: purple;
+	padding: 10px 50px;
+	margin: auto;
+	background-color: rgba(243, 151, 243, 0.3);
+	border: 1px solid rgba(102, 93, 102, 0.1);
+}
+
+.create-block__form {
+	width: 70%;
+	overflow: hidden;
+	margin: 20px auto;
+	padding: 20px 10px 20px 10%;
+	background-color: rgba(104, 93, 104, 0.1);
+	border-radius: 10px;
+}
+
+.create-block__form__each {
+	width: 80%;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+}
+.create-block__form__each--label {
+	width: 30%;
+	font-size: 0.8em;
+	font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+	display: inline-block;
+}
+.create-block__form__each--input {
+	width: 70%;
+}
+
+.create-block__form input {
+	width: 40%;
+	background: none;
+	border: none;
+	outline: none;
+	padding: 8px 0;
+	margin: 18px 0 18px 0px;
+	font-size: 0.9em;
+	color: purple;
+	border-bottom: 0.5px solid purple;
+	transition: 0.25s;
+}
+.create-block__form input:focus {
+	width: 60%;
+	border-bottom: 1px solid indigo;
+	color: indigo;
+}
+/* DESCRIPTION INPUT  */
+#create_concert_description {
+	width: 60%;
+	height: 80px;
+	background: none;
+	border: none;
+	outline: none;
+	margin: auto;
+	padding: 8px 0;
+	margin: 0;
+	font-size: 18px;
+	font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+	color: purple;
+	transition: 0.25s;
+	border-bottom: 0.5px solid purple;
+	background: rgb(181, 129, 185);
+}
+#create_concert_description:focus {
+	width: 99%;
+	height: 200px;
+	border: 1px solid indigo;
+	color: indigo;
+	transition: 0.25s;
+
+}
+/* DATE INPUT  */
+#create_concert_date_date {
+	display: inline;
+}
+#create_concert_date_time {
+	display: inline;
+}
+#create_concert_date select{
+	background-color: none;
+	border-radius: 10px;
+	background: rgb(181, 129, 185);
+	outline: none;
+	color: white;
+	transition: 0.35s;
+	padding: 5px;
+	cursor: pointer;
+}
+#create_concert_date select:focus {
+	border: 1px solid indigo;
+	background-color: purple;
+	transition: 0.15s;
+}
+/* MAX PLACES & PRICE INPUT */
+.create-block__form input[type=number] {
+	width: 10%;
+}
+/* IMAGE INPUT */
+.create-block__form input[type=file] {
+	width: 60%;
+}
+.create-block__form input[type=file]:focus {
+	width: 70%;
+}
+#file-upload-button {
+	width: 10%;
+	color: green;
+}
+
+/* MY EVENTS LIST */
+.coming-events-block {
+	padding: 20px 0;
+}
+
+.canceled-events-block {
+	display: none;
+}
+
+.passed-events-block {
+	display: none;
+}
+
+
+/* MEDIA QUERY */
+
+    /* SMARTPHONE */
+    @media all and (max-width: 600px) {
+	
+		/* EVENTS LIST */
+		.search-form-block {
+			width: 95%;
+		}
+	}

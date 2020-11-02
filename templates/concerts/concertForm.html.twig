@@ -2,78 +2,163 @@
 
 {% block body %}
 
-    {{ form_start(createForm) }}
-        <p>{{ form_errors(createForm)}}
-        {{ form_row(createForm.name, { 
-            'required': 'true', 
-            'label': 'Nom : ', 
-            'attr': {
-                'placeholder': "Nom de l'Événement/Artiste" 
-                } 
-            }) 
-        }}</p>
-        <p>{{ form_row(createForm.description,
-         {'required': 'true',
-          'label': 'Description : ',
-           'attr': {
-               'placeholder': "Description du concert",
-               } 
-            }) 
-        }}</p>
-        {% if not editMode %} 
-            <p>{{ form_row(createForm.date, {
-                'required': 'true',
-                'label': 'Date : ',
-                }) 
-            }}</p>
-        {% endif %}
-        <p>{{ form_row(createForm.city, {
-            'required': 'true', 'label': 'Ville : ',
-            'attr': {
-                'placeholder': "Ville du concert"
-                } 
-            }) 
-        }}</p>
-        <p>{{ form_row(createForm.adress, {
-            'required': 'true',
-            'label': 'Adresse : ',
-            'attr': {
-                'placeholder': "Lieu du concert"
-                }  
-            })
-        }}</p>
-        <p>{{ form_row(createForm.price, {
-            'required': 'true',
-            'label': 'Prix (en €) : ',
-            'attr': {
-                'min': 0, 
-                'max': 9999
-                 } 
-            })
-        }}</p>
-        <p>{{ form_row(createForm.maxPlaces, {
-            'required': 'true',
-            'label': 'Places maximum : ',
-            'attr': {
-                'min': 1,
-                'max': 9999
-                } 
-            }) 
-        }}</p>
-
-        <button type="submit">
-            {% if editMode %}
-                Enregister les modifications
-            {% else %}
-                Créer le concert
-            {% endif %}
-        </button>
-             {% if editMode %}
-                <a href="{{ path('showConcert', {'id': concertId}) }}">
-            {% else %}
-                <a href="">
-            {% endif %}
-        <button>Annuler</button></a>
-    {{ form_end(createForm )}}
+    <section><div class="create-block">
+        <div class="create-block__ title">
+            <h2>{{ title }}</h2>
+            <div class="create-block__ title--line"></div>
+        </div>
+        <div class="create-block__form">
+            {{ form_start(createForm) }}
+                <div class="create-block__form__each">
+                    <div class="create-block__form__each--label">
+                        <label>Nom :</label>
+                    </div>
+                    <div class="create-block__form__each--input">
+                        <p>{{ form_row(createForm.name, { 
+                            'required': 'true', 
+                            'label': ' ', 
+                            'label_attr': { 
+                                'class': 'labelForm'
+                                },
+                            'attr': {
+                                'placeholder': "Nom de l'Événement/Artiste" 
+                                } 
+                            }) 
+                        }}</p>
+                    </div>
+                </div>
+                {% if not editMode %} 
+                    <div class="create-block__form__each ">
+                        <div class="create-block__form__each--label">
+                            <label>Date/Heure :</label>
+                        </div>
+                        <div class="create-block__form__each--input">
+                            <p>{{ form_row(createForm.date, {
+                                'required': 'true',
+                                'label': ' ',
+                                }) 
+                            }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="create-block__form__each">
+                    <div class="create-block__form__each--label">
+                        <label>Ville :</label>
+                    </div>
+                    <div class="create-block__form__each--input">
+                        <p>{{ form_row(createForm.city, {
+                        'required': 'true',
+                        'label': ' ',
+                        'attr': {
+                            'placeholder': "Ville de l'événement"
+                            } 
+                        }) 
+                        }}</p>
+                    </div>
+                </div>
+                <div class="create-block__form__each">
+                    <div class="create-block__form__each--label">
+                        <label>Lieu :</label>
+                    </div>
+                    <div class="create-block__form__each--input">
+                        <p>{{ form_row(createForm.adress, {
+                            'required': 'true',
+                            'label': ' ',
+                            'attr': {
+                                'placeholder': "Lieu ou adresse de l'événement"
+                                }  
+                            })
+                        }}</p>
+                    </div>
+                </div>
+                <div class="create-block__form__each">
+                    <div class="create-block__form__each--label">
+                        <label>Prix (en €) :</label>
+                    </div>
+                    <div class="create-block__form__each--input">
+                        <p>{{ form_row(createForm.price, {
+                            'required': 'true',
+                            'label': ' ',
+                            'attr': {
+                                'min': 0, 
+                                'max': 9999
+                                } 
+                            })
+                        }}</p>
+                    </div>
+                </div>
+                <div class="create-block__form__each">
+                    <div class="create-block__form__each--label">
+                        <label>Places maximum :</label>
+                    </div>
+                    <div class="create-block__form__each--input">
+                        <p>{{ form_row(createForm.maxPlaces, {
+                            'required': 'true',
+                            'label': ' ',
+                            'attr': {
+                                'min': 1,
+                                'max': 9999
+                                } 
+                            }) 
+                        }}</p>
+                    </div>
+                </div>
+                <div class="create-block__form__each">
+                    <div class="create-block__form__each--label">
+                    <label>Description :</label>
+                    </div>
+                    <div class="create-block__form__each--input">
+                        <p>{{ form_row(createForm.description,
+                        {'required': 'true',
+                        'label': ' ',
+                        'label_attr': { 
+                            'class': 'labelForm'
+                            },
+                        'attr': {
+                            'placeholder': "Description du concert",
+                            } 
+                            }) 
+                        }}</p>
+                    </div>
+                </div>
+                {% if currentImage %}
+                    <div class="create-block__form__each">
+                        <div class="create-block__form__each--label ">
+                            <label>Image actuelle :</label>
+                        </div>
+                        <div class="create-block__form__each--input">
+                            <img src="/images/concerts_img/{{currentImage}}" alt="{{concertId}}" width="150">
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="create-block__form__each">
+                    <div class="create-block__form__each--label">
+                        <label>Choisir une image : </label>
+                    </div>
+                    <div class="create-block__form__each--input">
+                        {{ form_row(createForm.imagePath, {
+                            'label': ' ',
+                            }) 
+                        }}</p>
+                    </div>
+                </div>
+                <div class="btn-block">
+                    <button class="btn" type="submit">
+                        {% if editMode %}
+                            Enregister les modifications
+                        {% else %}
+                            Créer le concert
+                        {% endif %}
+                    </button>
+                        {% if editMode %}
+                            <a href="{{ path('showConcert', {'id': concertId}) }}">
+                        {% else %}
+                            <a href="{{ path('concertsList') }}">
+                        {% endif %}
+                    <button class="btn" type="button">Annuler</button></a>
+            {{ form_end(createForm) }}
+                </div>
+        </div>
+    </div></section>
 
 {% endblock %}

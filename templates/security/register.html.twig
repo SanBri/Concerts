@@ -1,39 +1,47 @@
 {% extends 'base.html.twig' %}
 
 
+
+
 {% block body %}
 
 {% if not app.user %}
-    <section>
-        {{ form_start(registerForm) }}
-            <p>{{ form_errors(registerForm)}}
-            {{ form_row(registerForm.email, { 
-                'required': 'true', 
-                'label': 'E-mail : ', 
-                'attr': {
-                    'placeholder': "E-mail" 
-                    } 
-                }) 
-            }}</p>
-            <p>{{ form_row(registerForm.password, { 
-                'required': 'true', 
-                'label': 'Mot de passe : ', 
-                'attr': {
-                    'placeholder': "Mot de passe" 
-                    } 
-                }) 
-            }}</p>
-            {{ form_row(registerForm.confirmPassword, { 
-                'required': 'true', 
-                'label': 'Confirmation mot de passe : ', 
-                'attr': {
-                    'placeholder': "Veuillez confirmer votre mot de passe" 
-                    } 
-                }) 
-            }}</p>
-            <input type="submit" value="Inscription">
-        {{ form_end(registerForm) }}
-    </section>
+    <section><div class="login-block">
+        <div class="login-block__ title">
+            <p>Inscription</p>
+            <div class="login-block__ title--line"></div>
+        </div>
+        <div class="login-block__form">
+            {{ form_start(registerForm) }}
+                <p>{{ form_errors(registerForm)}}</p>
+                <p>{{ form_row(registerForm.email, { 
+                    'required': 'true', 
+                    'label': ' ', 
+                    'attr': {
+                        'placeholder': "E-mail" 
+                        } 
+                    }) 
+                }}</p>
+                <p>{{ form_row(registerForm.password, { 
+                    'required': 'true', 
+                    'label': ' ', 
+                    'attr': {
+                        'placeholder': "Mot de passe" 
+                        } 
+                    }) 
+                }}</p>
+                {{ form_row(registerForm.confirmPassword, { 
+                    'required': 'true', 
+                    'label': ' ', 
+                    'attr': {
+                        'placeholder': "Confirmation du mot de passe" 
+                        } 
+                    }) 
+                }}</p>
+                <input type="submit" value="Envoyer">
+            {{ form_end(registerForm) }}
+        </div>
+    </div></section>
 {% else %}
     <p>Vous êtes déjà inscrit.</p>
 {% endif %}
