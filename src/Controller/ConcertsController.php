@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Entity\Concert;
 use App\Entity\Reservation;
 use App\Service\FileUploader;
+use App\Service\YoutubeVideoCheck;
 use App\Entity\ChangePassword;
 use App\Form\ConcertSearchType;
 use App\Form\CreateConcertType;
@@ -26,30 +27,113 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class ConcertsController extends AbstractController
 {
-    /**
-     * @Route("/", name="index")
-     */
-    public function index()
-    {
-        $user = $this->getUser();
-        if ($user) {
-        $userId = $user->getId();
-        } else {
-            $userId = NULL;
-        }
+    /** 
+    * @Route("/concerts", name="concertsList")
+    * @Route("/", name="index")
+    */
+   public function concertsList(Request $request, ObjectManager $manager, PaginatorInterface $paginator)
+   {
+       $query = false;
+       $title = "Liste des concerts";
+       $concertRepo = $this->getDoctrine()->getRepository(Concert::class);
+       $datas = $concertRepo->findComingConcerts('À venir');
+       $concerts = $paginator->paginate($datas, $request->query->getInt('page', 1), 8);
+       //* Actualise le statut des événements déjà passés :
+       date_default_timezone_set("Europe/Paris");
+       $date = time();
+       foreach ($datas as $concert) {
+           $concertDate = $concert->getDate();
+           $concertDateTimestamp = $concertDate->getTimestamp();
+           $concertId = $concert->getId();
+           if ($concertDateTimestamp < $date) {
+               $concert->setStatus('Passé');
+               $manager->persist($concert);
+               $reservationRepo = $this->getDoctrine()->getRepository(Reservation::class);
+               $reservations = $reservationRepo->findAllReservationsForThisConcert($concertId); 
+               foreach ($reservations as $reservation) {
+                   $reservation->setStatus('Passé');
+                   $manager->persist($reservation);
+               }
+               $manager->flush();
+           }
+       }
+       $form = $this->createForm(ConcertSearchType::class);
+       $form->handleRequest($request);
 
-        return $this->render('concerts/index.html.twig', [
-            'controller_name' => 'ConcertsController',
-            'title' => 'index',
-            'userId' => $userId
-        ]);
-    }
+       if ($form->isSubmitted() && $form->isValid()) {
+           $queryConcerts = $form->get('concertsQuery')->getData();
+           $concerts = $concertRepo->findConcertSearch($queryConcerts);
+           $title = 'Recherche : ' . $queryConcerts;
+           $query = true;
+       }
+       
+       return $this->render('concerts/concertsList.html.twig', [
+           'title' => $title,
+           'concertsSearchForm' => $form->createView(),
+           'concerts' => $concerts,
+           'query' => $query
+       ]);
+   }
+
+   /**
+    * @Route("/concert/{id}", name="showConcert")
+    */
+   public function show($id, Request $request, ObjectManager $manager, EmailsController $emailsCtlr)
+   {
+       
+       $concertRepo = $this->getDoctrine()->getRepository(Concert::class);
+       $concert = $concertRepo->find($id);
+       if ($concert) {
+           $reservation = new Reservation();
+           $form = $this->createForm(CreateReservationType::class, $reservation);
+           $form->handleRequest($request);
+           $concertReservations = $concert->getReservation();
+           $concertMaxPlaces = $concert->getMaxPlaces();
+           $remainingPlaces = $concertMaxPlaces - $concertReservations;
+           $concertName = $concert->getName();
+           $notEnoughPlaces = NULL;
+
+           if ($form->isSubmitted() && $form->isValid() ) {
+               $formDatasPlaces = $form->get('reservedPlaces')->getData();
+               if ($formDatasPlaces <= $remainingPlaces) {
+                   $reservation->setUser($this->getUser())
+                               ->setConcert($concert)
+                               ->setMailSent(false)
+                               ->setStatus('En cours');
+                   $manager->persist($reservation);
+                   $manager->flush();
+                   $reservedPlaces = $reservation->getReservedPlaces();
+                   $concert->setReservation($concertReservations + $reservedPlaces);
+                   $manager->persist($concert);
+                   $manager->flush();
+                   return $this->redirectToRoute("sendReservationConfirmationEmail", ['reservationId' => $reservation->getId()]);
+               } else {
+                   $notEnoughPlaces = "Il n'y a pas assez de place disponible";
+               }
+           }
+   
+           return $this->render('concerts/showConcert.html.twig', [
+               'title' => $concertName,
+               'concert' => $concert,
+               'reservationForm' => $form->createView(),
+               'remainingPlaces' => $remainingPlaces,
+               'currentDate' => date('d/m/Y'),
+               'currentDay' => date('d'),
+               'currentMonth' => date('m'),
+               'currentYear' => date('Y'),
+               'notEnoughPlaces' => $notEnoughPlaces
+           ]);
+
+       } else {
+           return $this->redirectToRoute("unknownConcert");
+       }
+   }
 
     /**
      * @Route("/create", name="createConcert")
      * @Route("/edit/{id}/{organizerToken}", name="editConcert")
      */
-    public function concertForm($organizerToken = null, Concert $concert = null, Request $request, ObjectManager $manager, FileUploader $fileUploader)
+    public function concertForm($organizerToken = null, Concert $concert = null, Request $request, ObjectManager $manager, FileUploader $fileUploader, YoutubeVideoCheck $youtubeVideoCheck)
     {
         $user = $this->getUser();
 
@@ -60,6 +144,7 @@ class ConcertsController extends AbstractController
             $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
 
             if ( $userRole == 'Organizer' ) {
+                $currentVideo = null;
                 if (!$concert) {
                     $currentImage = null;
                     $concert = new Concert();
@@ -78,10 +163,14 @@ class ConcertsController extends AbstractController
                     } else {
                         if (strpos($url, 'edit')) {
                             $currentImage = $concert->getImagePath();
+                            if ($concert->getVideoURL()) {
+                                $currentVideo = $concert->getVideoURL();
+                            }
                             if ($currentImage) {
-                            $concert->setImagePath(
-                                new File($this->getParameter('concerts_images_directory').'/'.$currentImage)
+                                $concert->setImagePath(
+                                    new File($this->getParameter('concerts_images_directory').'/'.$currentImage)
                                 ); // Paramètre pour que le form d'édition puisse ressortir l'image sans erreur
+                                
                             }
                         }
                     }
@@ -103,6 +192,21 @@ class ConcertsController extends AbstractController
                         } else {
                             exit($resp);
                         }
+                    } else {
+                        if ($currentImage) {
+                            $concert->setImagePath($currentImage);
+                        }
+                    }
+                    $formDataVideo = $form->get('videoURL')->getData();
+                    if ($formDataVideo) {
+                        if ($formDataVideo != $currentVideo) {
+                            $videoURL = $youtubeVideoCheck->isAYouTubeVideo($formDataVideo);
+                            if ( strlen($videoURL) === 11 ) {
+                                $concert->setVideoURL($videoURL);
+                            } else {
+                                exit($videoURL); // Message d'erreur : Ce n'est pas une vidéo YouTube 
+                            }
+                        }
                     }
                     $concert->setStatus('À venir');
                     $concert->setOrganizer($user);
@@ -115,6 +219,7 @@ class ConcertsController extends AbstractController
                     'createForm' => $form->createView(),
                     'editMode' => $concert->getId() !== null,
                     'currentImage' => $currentImage,
+                    'currentVideo' => $currentVideo,
                     'concertId' => $concert->getId()
                 ]);
             } else {
@@ -253,107 +358,6 @@ class ConcertsController extends AbstractController
         } else {
            return $this->redirectToRoute($resp);
         } 
-    }
-
-    /**
-     * @Route("/concerts", name="concertsList")
-     */
-    public function concertsList(Request $request, ObjectManager $manager, PaginatorInterface $paginator)
-    {
-        $query = false;
-        $title = "Liste des concerts";
-        $concertRepo = $this->getDoctrine()->getRepository(Concert::class);
-        $datas = $concertRepo->findComingConcerts('À venir');
-        $concerts = $paginator->paginate($datas, $request->query->getInt('page', 1), 8);
-        //* Actualise le statut des événements déjà passés :
-        date_default_timezone_set("Europe/Paris");
-        $date = time();
-        foreach ($datas as $concert) {
-            $concertDate = $concert->getDate();
-            $concertDateTimestamp = $concertDate->getTimestamp();
-            $concertId = $concert->getId();
-            if ($concertDateTimestamp < $date) {
-                $concert->setStatus('Passé');
-                $manager->persist($concert);
-                $reservationRepo = $this->getDoctrine()->getRepository(Reservation::class);
-                $reservations = $reservationRepo->findAllReservationsForThisConcert($concertId); 
-                foreach ($reservations as $reservation) {
-                    $reservation->setStatus('Passé');
-                    $manager->persist($reservation);
-                }
-                $manager->flush();
-            }
-        }
-        $form = $this->createForm(ConcertSearchType::class);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $queryConcerts = $form->get('concertsQuery')->getData();
-            $concerts = $concertRepo->findConcertSearch($queryConcerts);
-            $title = 'Recherche : ' . $queryConcerts;
-            $query = true;
-        }
-        
-        return $this->render('concerts/concertsList.html.twig', [
-            'title' => $title,
-            'concertsSearchForm' => $form->createView(),
-            'concerts' => $concerts,
-            'query' => $query
-        ]);
-    }
-
-    /**
-     * @Route("/concert/{id}", name="showConcert")
-     */
-    public function show($id, Request $request, ObjectManager $manager, EmailsController $emailsCtlr)
-    {
-        
-        $concertRepo = $this->getDoctrine()->getRepository(Concert::class);
-        $concert = $concertRepo->find($id);
-        if ($concert) {
-            $reservation = new Reservation();
-            $form = $this->createForm(CreateReservationType::class, $reservation);
-            $form->handleRequest($request);
-            $concertReservations = $concert->getReservation();
-            $concertMaxPlaces = $concert->getMaxPlaces();
-            $remainingPlaces = $concertMaxPlaces - $concertReservations;
-            $concertName = $concert->getName();
-            $notEnoughPlaces = NULL;
-
-            if ($form->isSubmitted() && $form->isValid() ) {
-                $formDatasPlaces = $form->get('reservedPlaces')->getData();
-                if ($formDatasPlaces <= $remainingPlaces) {
-                    $reservation->setUser($this->getUser())
-                                ->setConcert($concert)
-                                ->setMailSent(false)
-                                ->setStatus('En cours');
-                    $manager->persist($reservation);
-                    $manager->flush();
-                    $reservedPlaces = $reservation->getReservedPlaces();
-                    $concert->setReservation($concertReservations + $reservedPlaces);
-                    $manager->persist($concert);
-                    $manager->flush();
-                    return $this->redirectToRoute("sendReservationConfirmationEmail", ['reservationId' => $reservation->getId()]);
-                } else {
-                    $notEnoughPlaces = "Il n'y a pas assez de place disponible";
-                }
-            }
-    
-            return $this->render('concerts/showConcert.html.twig', [
-                'title' => $concertName,
-                'concert' => $concert,
-                'reservationForm' => $form->createView(),
-                'remainingPlaces' => $remainingPlaces,
-                'currentDate' => date('d/m/Y'),
-                'currentDay' => date('d'),
-                'currentMonth' => date('m'),
-                'currentYear' => date('Y'),
-                'notEnoughPlaces' => $notEnoughPlaces
-            ]);
-
-        } else {
-            return $this->redirectToRoute("unknownConcert");
-        }
     }
 
     /**

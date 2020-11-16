@@ -3,16 +3,26 @@
 {% block body %}
 
  <div class="main">
-    <h3>{{concert.name}} - <em>{{concert.date | date('d/m/Y à h:i')}}</em></h3>
+    <div class="title">
+        <h2>Reporter un événement</h2>
+        <div class="title--line"></div>
+    </div>
+    
+    <h3>Événement : {{concert.name}} - <em>{{concert.date | date('d/m/Y à h:i')}}</em></h3>
 
     {{ form_start(newDateForm) }}
+        <div class="create-block__form__each--label">
+            <label>Changer la date :</label>
+        </div>
         <p>{{ form_row(newDateForm.date, {
             'required': 'true',
-            'label': 'Changer la date : ',
+            'label': ' ',
         }) }}</p>
         
-        <p><a href="{{ path('showConcert', {'id': concert.id}) }}"><input type="button" value="Retour"></a>
-        <input type="submit" value="Confirmer">
+        <div class="btn-block">
+            <p><a href="{{ path('showConcert', {'id': concert.id}) }}"><input type="button" class="btn" value="Retour"></a>
+            <input type="submit" class="btn" value="Confirmer">
+        </div>
 
     {{ form_end(newDateForm) }} 
  </div>

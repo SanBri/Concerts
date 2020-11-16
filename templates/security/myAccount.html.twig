@@ -2,15 +2,21 @@
 
 {% block body %}
 
-    {% for message in app.flashes('wrongPassword') %}
-        <strong>{{ message }}</strong>
-    {% endfor %}</p>
-<ul>
-    <li><a href="{{ path("reservationsList", {'userId': app.user.id}) }}">Mes réservations</a></li>
-    {% if app.user and app.user.role == 'Organizer' %}
-        <li><a href="{{ path("myConcertsList", {'userId': app.user.id}) }}">Mes concerts</a></li>
-    {% endif %}
-    <li><a href="{{ path('passwordChange', {'userId': app.user.id }) }}">Modifier mon mot de passe</a></li>
-</ul>
+    <div class="main">
+        {% for message in app.flashes('wrongPassword') %}
+            <strong>{{ message }}</strong>
+        {% endfor %}</p>
+        <div class="title">
+            <h2>{{ app.user.email }}</h2>
+            <div class="title--line"></div>
+        </div>
+        <ul>
+            <li><a href="{{ path("reservationsList", {'userId': app.user.id}) }}">Mes réservations</a></li>
+            {% if app.user and app.user.role == 'Organizer' %}
+                <li><a href="{{ path("myConcertsList", {'userId': app.user.id}) }}">Mes concerts</a></li>
+            {% endif %}
+            <li><a href="{{ path('passwordChange', {'userId': app.user.id }) }}">Modifier mon mot de passe</a></li>
+        </ul>
+</div>
 
 {% endblock %}

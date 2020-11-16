@@ -28,6 +28,7 @@ class CreateConcertType extends AbstractType
                 'required' => false,
                 'data_class' => null
             ])
+            ->add('videoURL')
         ;
         if ( strpos($url,'edit') === false ) { 
             $builder

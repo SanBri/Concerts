@@ -6,8 +6,7 @@
 parameters:
     public: true
     concerts_images_directory: '%kernel.project_dir%/public/images/concerts_img'
-
-
+    
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -36,5 +35,6 @@ services:
         public: true
         arguments:
             $concerts_images_directory: '../public/images/concerts_img'
+    App\Service\YouTubeVideoCheck:
 
     Doctrine\Persistence\ObjectManager: '@doctrine.orm.default_entity_manager'

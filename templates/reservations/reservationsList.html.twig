@@ -2,27 +2,75 @@
 
 {% block body %}
 
-{% set submittedToken = csrf_token('cancel-reservation') %}
+    {% set submittedToken = csrf_token('cancel-reservation') %}
 
-<section>
- {% if reservations %}
-     {% for reservation in reservations %}
-      <p><strong>Réservation n°{{ reservation.id }}</strong></p>
+    <section><div class="btn-block">
+        <input type="button" class="category-btn btn currentBtn" id="coming" value="Réservations à venir">
+        <input type="button" class="category-btn btn" id="canceled" value="Réservations annulées">
+        <input type="button" class="category-btn btn"  id="past" value="Réservations passées">
+    </div></section>
 
-      <p><strong>Concert :</strong> {{ reservation.concert.name }}<br />
-      <strong>Date :</strong> {{ reservation.concert.date | date('d/m/Y') }}<br />
-      <strong>Nombre de places réservées :</strong> {{ reservation.reservedPlaces }}</p>
-      <p><a href="{{ path('showConcert', {'id' : reservation.concert.id}) }}"><input type="button" value="Voir le concert"></a>
-      {% if reservation.status == 'Confirmé' %}
-          <a href="{{ path('confirmReservationCancel', {'reservationId': reservation.id, 'submittedToken': submittedToken}) }}"><input type="button" value="Annuler la réservation"></a></p>
-      {% endif %}
-      <hr />
-    {% endfor %}
- {% else %}
-      <p>Vous n'avez pas de réservation</p>    
-      <p><a href="{{ path('concertsList') }}">Voir les concerts</a></p>
- {% endif %}
+    <section><div class="coming main"> {# À VENIR #}
+        {% if reservations %}
+            <div class="title">
+                <h2>Mes réservations à venir</h2>
+                <div class="title--line"></div>
+            </div>
+            <div class="each-block">
+            {% for reservation in reservations %}
+                <p><strong>Réservation n°{{ reservation.id }}</strong></p>
+                <p><strong>Concert :</strong> {{ reservation.concert.name }}<br />
+                <strong>Date :</strong> {{ reservation.concert.date | date('d/m/Y') }}<br />
+                <strong>Nombre de places réservées :</strong> {{ reservation.reservedPlaces }}</p>
+                <div class="btn-block">
+                    <p><a href="{{ path('showConcert', {'id' : reservation.concert.id}) }}"><input type="button" class="btn" value="Voir le concert"></a>
+                    <a href="{{ path('confirmReservationCancel', {'reservationId': reservation.id, 'submittedToken': submittedToken}) }}"><input type="button" class="btn" value="Annuler la réservation"></a></p>
+                </div>
+            {% endfor %}
+            </div>
+        {% else %}
+            <p>Vous n'avez pas encore de réservation</p>    
+            <a href="{{ path('concertsList') }}"><button class="btn">Chercher un événement</button></a>
+        {% endif %}
+    </div></section> {# FIN À VENIR #}
 
-</section>
+    <section><div class="canceled main"> {# RÉSERVATIONS ANNULÉES #}
+        {% if canceledReservations %} 
+            <div class="title">
+                <h2>Mes réservations annulées</h2>
+                <div class="title--line"></div>
+            </div>
+            {% for canceledReservation in canceledReservations %}
+                <p><strong>Réservation n°{{ canceledReservation.id }}</strong></p>
+                <p><strong>Concert :</strong> {{ canceledReservation.concert.name }}<br />
+                <strong>Date :</strong> {{ canceledReservation.concert.date | date('d/m/Y') }}<br />
+                <strong>Nombre de places réservées :</strong> {{ canceledReservation.reservedPlaces }}</p>
+                <hr />
+            {% endfor %}
+        {% else %}
+            <p>Aucune réservation annulée</p>
+            <a href="{{ path('concertsList') }}"><button class="btn">Chercher un événement</button></a>
+        {% endif %}     
+    </div></section> {# FIN RÉSERVATIONS ANNULÉES #}
+
+    <section><div class="past main"> {# RÉSERVATIONS PASSÉES #}
+        {% if pastReservations %}
+            <div class="title">
+                <h2>Mes réservations passées</h2>
+                <div class="title--line"></div>
+            </div>
+            {% for pastReservation in pastReservations %}
+                <p><strong>Réservation n°{{ pastReservation.id }}</strong></p>
+                <strong>Date :</strong> {{ pastReservation.concert.date | date('d/m/Y') }}
+                <p><strong>Concert :</strong> {{ pastReservation.concert.name }}
+                <strong>Nombre de places réservées :</strong> {{ pastReservation.reservedPlaces }}
+                <hr />
+            {% endfor %}
+        {% else %}
+            <p>Aucune réservation déjà passée</p>
+            <a href="{{ path('concertsList') }}"><button class="btn">Chercher un événement</button></a>
+
+        {% endif %}     
+    </div></section> {# FIN RÉSERVATIONS PASSÉES #}
 
 {% endblock %}

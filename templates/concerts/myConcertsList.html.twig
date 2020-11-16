@@ -3,15 +3,15 @@
 {% block body %}
 
     <section><div class="btn-block">
-        <input type="button" class="btn currentBtn" id="coming-events-btn" value="Événements à venir">
-        <input type="button" class="btn" id="canceled-events-btn" value="Événements annulés">
-        <input type="button" class="btn"  id="passed-events-btn" value="Événements passés">
+        <input type="button" class="category-btn btn currentBtn" id="coming" value="Événements à venir">
+        <input type="button" class="category-btn btn" id="canceled" value="Événements annulés">
+        <input type="button" class="category-btn btn"  id="past" value="Événements passés">
    </div></section>
 
-    <section><div class="coming-events-block main"> {# CONCERTS À VENIR #}
+    <section><div class="coming main"> {# CONCERTS À VENIR #}
         {% if concerts %}
             <div class="title">
-                <h2>À venir</h2>
+                <h2>Mes événements à venir</h2>
                 <div class="title--line"></div>
             </div>
             {% for concert in concerts %}
@@ -22,12 +22,12 @@
                         {% set reservations = concert.reservation %}
                     {% endif %}
                     <div class="title">
-                        <h3><a href="{{ path('showConcert', {'id': concert.id}) }} ">{{ concert.name }}</h3>
+                        <h3><a href="{{ path('showConcert', {'id': concert.id}) }} ">{{ concert.name }}</h3></a>
                         <div class="title--line"></div>
                     </div>
-                    <p>{{concert.date | date('d/m/Y')}}</a></p>
+                    <p>{{concert.date | date('d/m/Y')}}</p>
                     <p>({{reservations}}/{{concert.maxPlaces}} réservation{% if reservations > 1 %}s{% endif %})</p>
-                    <div class="each-block__button">
+                    <div class="btn-block">
                         {% set organizerToken = csrf_token('concert-organizer') %}
                         <a href="{{ path('editConcert', {'id': concert.id, 'organizerToken': organizerToken}) }}"><input type="button" class="btn" value="Modifier"></a>
                         <a href="{{ path('changeConcertDate', {'id': concert.id, 'organizerToken': organizerToken}) }}"><input type="button" class="btn" value="Reporter"></a>
@@ -40,29 +40,33 @@
         {% endif %}
     </div></section> {# FIN CONCERTS À VENIR #}
     
-    {% if canceledConcerts %} {# CONCERTS ANNULÉS #}
-        <section><div class="canceled-events-block main"> 
+    <section><div class="canceled main"> {# CONCERTS ANNULÉS #}
+        {% if canceledConcerts %} 
             <div class="title">
-                <h2>Événements annulés</h2>
+                <h2>Mes événements annulés</h2>
                 <div class="title--line"></div>
             </div>
             {% for canceledConcert in canceledConcerts %}
-                <p><a href="{{ path('showConcert', {'id': canceledConcert.id}) }} ">{{ canceledConcert.name }} - {{canceledConcert.date | date('d/m/Y')}}</a>
+                <p><a href="{{ path('showConcert', {'id': canceledConcert.id}) }} ">{{canceledConcert.date | date('d/m/Y')}} - {{ canceledConcert.name }}</a></p>
             {% endfor %}
-        </div></section> 
-    {% endif %} {# FIN CONCERTS ANNULÉS #}
+        {% else %}
+            <p>Aucun concert annulé</p>
+        {% endif %} 
+    </div></section> {# FIN CONCERTS ANNULÉS #}
     
-    {% if pastConcerts %} {# CONCERTS PASSÉS #}
-        <section><div class="passed-events-block main"> 
+    <section><div class="past main"> 
+        {% if pastConcerts %} {# CONCERTS PASSÉS #}
             <div class="title">
-                <h2>Événements passés</h2>
+                <h2>Mes événements passés</h2>
                 <div class="title--line"></div>
             </div>            
             {% for pastConcert in pastConcerts %}
-                <p><a href="{{ path('showConcert', {'id': pastConcert.id}) }} ">{{ pastConcert.name }} - {{pastConcert.date | date('d/m/Y')}}</a>
+                <p><a href="{{ path('showConcert', {'id': pastConcert.id}) }} ">{{pastConcert.date | date('d/m/Y')}} - {{ pastConcert.name }}</a></p>
             {% endfor %}
-        </div></section> 
-    {% endif %} {# FIN CONCERTS PASSÉS #}
+        {% else %}
+            <p>Aucun concert déjà passé</p>
+        {% endif %} 
+    </div></section> {# FIN CONCERTS PASSÉS #}
 
 {% endblock %}
 

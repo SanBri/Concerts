@@ -100,6 +100,11 @@ class Concert
      */
     private $imagePath;
 
+    /**
+     * @ORM\Column(type="string", length=2083, nullable=true)
+     */
+    private $videoURL;
+
     public function __construct()
     {
         $this->reservations = new ArrayCollection();
@@ -269,6 +274,18 @@ class Concert
     public function setImagePath(?string $imagePath): self
     {
         $this->imagePath = $imagePath;
+
+        return $this;
+    }
+
+    public function getVideoURL(): ?string
+    {
+        return $this->videoURL;
+    }
+
+    public function setVideoURL(?string $videoURL): self
+    {
+        $this->videoURL = $videoURL;
 
         return $this;
     }

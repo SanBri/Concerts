@@ -8,10 +8,14 @@
             <div class="create-block__ title--line"></div>
         </div>
         <div class="create-block__form">
+            <div class="title">
+                <h2>Informations principales</h2>
+                <div class="title--line"></div>
+            </div>
             {{ form_start(createForm) }}
                 <div class="create-block__form__each">
                     <div class="create-block__form__each--label">
-                        <label>Nom :</label>
+                        <label>Nom * :</label>
                     </div>
                     <div class="create-block__form__each--input">
                         <p>{{ form_row(createForm.name, { 
@@ -30,7 +34,7 @@
                 {% if not editMode %} 
                     <div class="create-block__form__each ">
                         <div class="create-block__form__each--label">
-                            <label>Date/Heure :</label>
+                            <label>Date/Heure * :</label>
                         </div>
                         <div class="create-block__form__each--input">
                             <p>{{ form_row(createForm.date, {
@@ -43,7 +47,7 @@
                 {% endif %}
                 <div class="create-block__form__each">
                     <div class="create-block__form__each--label">
-                        <label>Ville :</label>
+                        <label>Ville * :</label>
                     </div>
                     <div class="create-block__form__each--input">
                         <p>{{ form_row(createForm.city, {
@@ -58,7 +62,7 @@
                 </div>
                 <div class="create-block__form__each">
                     <div class="create-block__form__each--label">
-                        <label>Lieu :</label>
+                        <label>Adresse * :</label>
                     </div>
                     <div class="create-block__form__each--input">
                         <p>{{ form_row(createForm.adress, {
@@ -73,7 +77,7 @@
                 </div>
                 <div class="create-block__form__each">
                     <div class="create-block__form__each--label">
-                        <label>Prix (en €) :</label>
+                        <label>Prix (en €) * :</label>
                     </div>
                     <div class="create-block__form__each--input">
                         <p>{{ form_row(createForm.price, {
@@ -89,7 +93,7 @@
                 </div>
                 <div class="create-block__form__each">
                     <div class="create-block__form__each--label">
-                        <label>Places maximum :</label>
+                        <label>Places maximum * :</label>
                     </div>
                     <div class="create-block__form__each--input">
                         <p>{{ form_row(createForm.maxPlaces, {
@@ -105,7 +109,7 @@
                 </div>
                 <div class="create-block__form__each">
                     <div class="create-block__form__each--label">
-                    <label>Description :</label>
+                    <label>Description * :</label>
                     </div>
                     <div class="create-block__form__each--input">
                         <p>{{ form_row(createForm.description,
@@ -120,6 +124,12 @@
                             }) 
                         }}</p>
                     </div>
+                </div>
+            </div>
+            <div class="create-block__form">
+                <div class="title">
+                    <h2>Image et vidéo</h2>
+                    <div class="title--line"></div>
                 </div>
                 {% if currentImage %}
                     <div class="create-block__form__each">
@@ -142,6 +152,31 @@
                         }}</p>
                     </div>
                 </div>
+                {% if currentVideo %}
+                    <div class="create-block__form__each">
+                        <div class="create-block__form__each--label ">
+                            <label>Vidéo actuelle :</label>
+                        </div>
+                        <div class="create-block__form__each--input">
+                            <p><iframe width="300" height="215" src="https://www.youtube.com/embed/{{currentVideo}}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
+                        </div>
+                    </div>
+                {% endif %} 
+                <div class="create-block__form__each">
+                    {% for message in app.flashes('wrongYouTubeURL') %}
+                        <span class="error"><p>{{ message }}</p></span>
+                    {% endfor %}
+                    <div class="create-block__form__each--label">
+                        <label>Intégrer une vidéo YouTube : </label>
+                    </div>
+                    <div class="create-block__form__each--input">
+                        {{ form_row(createForm.videoURL, {
+                            'label': ' ',
+                            }) 
+                        }}</p>
+                    </div>
+                </div>
+
                 <div class="btn-block">
                     <button class="btn" type="submit">
                         {% if editMode %}

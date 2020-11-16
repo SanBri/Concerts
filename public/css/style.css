@@ -44,42 +44,67 @@ table {
 }
 /* RESET END */
 
-/* GENERAL */
+/* FONTS */
+@font-face {
+    font-family: "Lato";
+    src:url('fonts/Lato-Regular.ttf') format('truetype')
+}
 
+@font-face {
+	font-family: "Alatsi";
+	src:url('/public/fonts/Alatsi/alatsi-regular-webfont.ttf') format('truetype'),
+		url('/public/fonts/Alatsi/alatsi-regular-webfont.eot') format('eot'),
+		url('/public/fonts/Alatsi/alatsi-regular-webfont.woff') format('woff'),
+		url('/public/fonts/Alatsi/alatsi-regular-webfont.svg') format('svg'),
+}
+
+/* GENERAL */
 .container__body {
-	/* background-color: rgb(181, 129, 185); */
-	background-color: rgba(83, 83, 83, 0.4);
-	padding: 5px;
 	line-height: 1.5;
-	min-height: 100vh;
-	margin-top: 50px;
+	padding-top: 50px;
+	padding-bottom: 20px;
+	font-size: 20px;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	-ms-box-sizing: border-box;
 	-o-box-sizing: border-box;
 	box-sizing: border-box;
+	background-color: rgb(247, 248, 250);
 }
 
 .container__footer {
+	border-top: solid 0.5px black;
+	background-color: white; /* SI L'IMAGE NE S'AFFICHE PAS */
 	height: 300px;
-	background-color: orange;
 }
 
 .main {
 	padding: 20px;
-	width: 80%;
+	width: 60%;
 	margin: 50px auto;
-	border: solid 0.5px black;
-	border-radius: 5px;
 	text-align: center;
-	background-color: rgb(181, 129, 185);
+	background: rgba(255, 255, 255, 0.8);
+	filter: drop-shadow(0px 10px 5px rgba(206, 182, 206, 0.4));
 }
-
+main a:hover, .login-block__form a:hover {
+	color: indigo;
+}
+.event-reservations a {
+	color: white;
+}
 a {
+	color: purple;
 	text-decoration: none;
 }
+
+.error {
+	color: red;
+	font-weight: bold;
+}
+
 .title {
-	font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+	margin-bottom: 10px;
+	font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 	font-size: 1.8rem;
 	color: purple;
 	transition: 0.20s;
@@ -108,23 +133,18 @@ a {
 	padding: 10px;
 	border-radius: 5%;
 	transition: 0.25s;
-	font-family: "Roboto";
+	font-family: "Lato";
 }
 .btn:hover {
 	background: purple;
 	transition: 0.25s;
 }
 
-.currentBtn {
-	background: purple;
-	cursor: initial;
-}
-
 .each-block {
 	width: 50%;
 	border-radius: 10px;
 	margin: 5px auto;
-	padding: 5px;
+	padding: 10px 5px;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -133,6 +153,10 @@ a {
 }
 .each-block a {
 	text-decoration: none;
+	color: purple;
+}
+.each-block .title {
+	margin-bottom: 0;
 }
 .each-block:hover {
 	background-color: rgba(104, 93, 104, 0.5);
@@ -169,7 +193,7 @@ a {
 	text-align: center;
 	font-size: 1em;
 }
-.header__login a {
+.header__login a i, .header__login a i:hover {
 	color: white;
 }
 .header__home {
@@ -177,9 +201,7 @@ a {
 	padding-left: 130px;
 	display: flex;
 	align-items: center;
-}
-.header__home a {
-	color: rgb(181, 129, 185);
+	font-size: 2em;
 }
 .header__user-parameters {
 	width: 2%;
@@ -187,17 +209,18 @@ a {
 	display: flex;
 	justify-content: flex-end;
 	align-items: center;
+	font-size: 2em;
 }
 .container__header i {
-	font-size: 2em;
 	cursor: pointer;
 	color: rgba(128, 0, 128, 0.6);
+	transition: 0.25s;
 }
 .container__header i:hover {
 	color: purple;
 	transition: 0.25s;
 }
-#activeUserIcon {
+#activeUserIcon { 
 	display: none;
 }
 
@@ -217,39 +240,32 @@ a {
 	line-height: 1.4em;
 	border: solid 0.5px black;
 }
-.user-parameters--active a{
+
+.each-parameter {
+	width: 100%;
+	text-align: center;
+}
+.each-parameter:hover, .each-parameter:hover a, .each-parameter:hover a i {
+	background-color: rgb(247, 137, 255);
+	color: purple;
+	transition: 0s;
+}
+.each-parameter a, .each-parameter a i {
 	color: white;
 }
-.user-parameters--active a:hover{
-	color: rgb(181, 129, 185);
+.user-parameters--active li a i {
+	transition: 0s;
 }
 
 /* LOGIN & REGISTER */
 .login-block {
 	width: 25%;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
+	margin: 20px auto;
 	color: purple;
 	padding: 100px;
-	background-color: rgba(70, 69, 70, 0.1);
+	background: rgba(255, 255, 255, 0.6);
+	filter: drop-shadow(0px 10px 5px rgba(206, 182, 206, 0.4));
 	border: 1px solid rgba(70, 69, 70, 0.1);
-}
-
-.login-block__title {
-	width: 120px;
-	font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-	font-size: 2rem;
-	color: purple;
-	border-bottom: purple 3px solid;
-	margin-bottom: 10px;
-	transition: 0.20s;
-}
-.login-block__title:hover {
-	width: 200px;
-	border-bottom-color: indigo;
-	color: indigo;
 }
 
 .login-block__form {
@@ -293,28 +309,39 @@ a {
 
 /* EVENTS LIST */
 
-.events-list-block a {
-	text-decoration: none;
-}
-
 .search-event-block {
 	width: 100%;
+	height: 95vh;
+	box-sizing: border-box;
+	background: fixed;
+	background-size: cover;
+	background-color: white; /* SI L'IMAGE NE S'AFFICHE PAS */
+	margin: auto;
 	display: flex;
 	flex-direction: column;
+	align-items: center;
+	justify-items: center;
+	justify-content: center;
 }
-
+.search-event-block__content {
+	padding: 20px;
+	border-radius: 2px;
+	background: rgba(255, 255, 255, 0.6);
+	filter: drop-shadow(0px 10px 5px rgba(128, 0, 128, 0.4));
+	color: rgba(128, 0, 128, 0.4);
+}
+.search-event-block .title {
+	font-family: "Alatsi";
+}
 .search-event-block__form {
-	width: 50%;
+	width: 100%;
 	position: relative;
-	margin: auto;
 	text-align: center;
 	margin-bottom: 10px;
 }
-
 #concert_search_concertsQuery {
 	width: 100%;
 	padding: 20px;
-	padding-right: 60px;
 	box-sizing: border-box;
 	background: rgba(0,0,0,0.3);
 	border: 2px solid white;
@@ -337,7 +364,7 @@ a {
 }
 #concert_search_concertsQuery:focus {
 	transition: 0.35s;
-	border-color: indigo;
+	border-color: rgba(128, 0, 128, 0.4);
 }
 
 .fa-search {
@@ -349,61 +376,30 @@ a {
 	font-size: 25px;
 }
 
-.all-events {
-	width: 50%;
-	margin: auto;
-	padding: 20px 0;
-	display: flex;
-	flex-direction: column;
-	justify-items: center;
-	align-items: center;
-	background-color: rgb(181, 129, 185);
-}
-
 .each-event {
-	min-width: 500px;
-	max-width: 500px;
-	border-radius: 10px;
-	margin: 5px 0;
-	padding: 5px;
-	display: flex;
+	width: 0;
 	flex-direction: row;
-	justify-content: center;
-	align-items: center;
-	background-color: rgba(104, 93, 104, 0.2);
 	cursor: pointer;
+	padding : 0;
+	overflow: hidden;
 }
-
 .each-event__image {
 	margin-right: 20px;
 }
-
 .each-event-content {
 	display: flex;
 	flex-direction: column;
 }
-.each-event a {
-	color: purple;
-}
 .each-event:hover * {
 	color: indigo;
+}
+.each-event .title {
+	font-size: 1.3rem;
 }
 .each-event:hover .title--line {
 	transition: 0.45s;
 	border-bottom-color: indigo;
 	width: 90%;
-}
-
-.each-event-content__title {
-	width: 100%;
-	font-size: 2em;
-	margin-bottom: 20px;
-}
-.each-event-content__title--line {
-	border-bottom: 3px solid purple;
-	width: 30%;
-	margin-left: 10px;
-	transition: 0.45s;
 }
 
 #full-reservations {
@@ -414,6 +410,20 @@ a {
 }
 
 /* SHOW EVENT */
+
+.social-networks__block {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	justify-items: center;
+	align-content: center;
+}
+
+.social_btn {
+	width: 60px;
+
+}
 
 .event-content {
 	display: flex;
@@ -426,11 +436,10 @@ a {
 }
 
 .event-description {
-	width: 60%;
-	padding: 10px;
+	width: 0;
 	border-right: 0.5px solid black;
 	text-align: center;
-	padding: 0 30px;
+	overflow: hidden;
 }
 .event-description:hover .title--line {
 	width: 90%;
@@ -448,7 +457,8 @@ a {
 	display: flex;
 	flex-direction: column;
 	margin: auto;
-	width: 80%;
+	width: 0;
+	overflow: hidden;
 	padding: 20px;
 	border-radius: 10px;
 	background-color: rgba(104, 93, 104, 0.2);
@@ -478,9 +488,7 @@ a {
 	transition: 0.15s;
 }
 
-
 /* EVENT CREATE/EDIT FORM */
-
 .create-block {
 	width: 70%;
 	color: purple;
@@ -506,9 +514,10 @@ a {
 	justify-content: space-between;
 	align-items: center;
 }
-.create-block__form__each--label {
+.create-block__form__each--label  {
 	width: 30%;
 	font-size: 0.8em;
+	font-weight: bold;
 	font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 	display: inline-block;
 }
@@ -556,16 +565,15 @@ a {
 	border: 1px solid indigo;
 	color: indigo;
 	transition: 0.25s;
-
 }
 /* DATE INPUT  */
-#create_concert_date_date {
+#create_concert_date_date, #form_date_date {
 	display: inline;
 }
-#create_concert_date_time {
+#create_concert_date_time, #form_date_time {
 	display: inline;
 }
-#create_concert_date select{
+#create_concert_date select, #form_date select{
 	background-color: none;
 	border-radius: 10px;
 	background: rgb(181, 129, 185);
@@ -575,7 +583,7 @@ a {
 	padding: 5px;
 	cursor: pointer;
 }
-#create_concert_date select:focus {
+#create_concert_date select:focus,#form_date select:focus {
 	border: 1px solid indigo;
 	background-color: purple;
 	transition: 0.15s;
@@ -596,19 +604,16 @@ a {
 	color: green;
 }
 
-/* MY EVENTS LIST */
-.coming-events-block {
-	padding: 20px 0;
-}
+/* MY EVENTS & MY RESERVATIONS LIST */
 
-.canceled-events-block {
+.canceled, .past {
 	display: none;
 }
 
-.passed-events-block {
-	display: none;
+.currentBtn {
+	background: purple;
+	cursor: initial;
 }
-
 
 /* MEDIA QUERY */
 

@@ -27,9 +27,11 @@
             {% if concert.imagePath %}
                 <img src="/images/concerts_img/{{concert.imagePath}}" alt="{{concert.name}}" width="300">
             {% endif %}
-
+            {% if concert.videoURL %}
+                <p><iframe width="560" height="315" src="https://www.youtube.com/embed/{{concert.videoURL}}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
+            {% endif %}
             <p>{{ concert.description }}</p>
-        </div>
+        </div> {# END DESCRIPTION BLOCK #}
 
         <div class="event-sides-block">
             {% if concert.status != "Annulé" %}
@@ -39,34 +41,31 @@
                             <h2>Informations</h2>
                             <div class="title--line"></div>
                         </div>
-                            <p>Date : {{ concert.date | date('d-m-Y h:i:s') }} à {{ concert.date | date('h:i', 'Europe/Paris') }}</p>
-                            <p>Lieu : {{ concert.adress }} à {{ concert.city }}</p>
-                            <p>Prix : {{ price }}{% if price != "Gratuit" %}€{% endif %}</p>
-                            {% if concert.date > date()  %}
-                                {% if remainingPlaces != 0 %}
-                                    <p><strong>{{ remainingPlaces }}</strong>
-                                    {% if remainingPlaces > 1 %}
-                                        places restantes 
-                                    {% elseif remainingPlaces == 1 %}
-                                        place restante
-                                    {% endif %}
-                                    </p>
-                                {% endif %}
-                            {% endif %}
-                        </div>
-                    </div> {# END CONCERT INFOS #}
+                        <p title="Date"><i class="far fa-calendar-alt"></i> {{ concert.date | date('d/m/Y') }}</p>
+                        <p title="Heure"><i class="fas fa-clock"></i> {{ concert.date | date('h:i', 'Europe/Paris') }}</p>
+                        <p title="Lieu"><i class="fas fa-map-marker-alt"></i> {{ concert.adress }} à {{ concert.city }}</p>
+                    </div>
+                </div> {# END INFOS BLOCK #}
 
-                    <div class="event-side-block event-reservations">
+                <div class="event-side-block event-reservations">
                     <div class="event-side-block__text">
                         <div class="title">
                             <h2>Réservations</h2>
                             <div class="title--line"></div>
                         </div>
                         {% if notEnoughPlaces != NULL %}
-                            <strong><p>{{ notEnoughPlaces }}</strong></p>
+                            <p>{{ notEnoughPlaces }}</p>
                         {% endif %}
-                        {% if concert.date > date()  %}
+                        {% if concert.date > date() %}
+                            <p title="Prix"><i class="far fa-credit-card"></i> {{ price }}{% if price != "Gratuit" %}€{% endif %}</p>
                             {% if concert.maxPlaces > concert.reservation  %}
+                                <p title="Places Disponibles"><i class="fas fa-users"></i> {{ remainingPlaces }}
+                                {% if remainingPlaces > 1 %}
+                                    places restantes 
+                                {% elseif remainingPlaces == 1 %}
+                                    place restante
+                                {% endif %}
+                                </p>
                                 {% if app.user %}
                                     {{ form_start(reservationForm) }}
                                         <p>{{ form_errors(reservationForm)}}
@@ -83,8 +82,8 @@
                                         </div>
                                     {{ form_end(reservationForm) }}
                                 {% else %}
-                                    <p>Veuillez vous connecter pour réserver<br />
-                                    <a href="{{ path("login") }}">Connexion</a></p>
+                                    <p>Veuillez vous connecter pour Réserver</p>
+                                    <button class="btn"><a href="{{ path("login") }}">Connexion</a></button>
                                 {% endif %}
                             {% else %}
                                 <p><strong>Il n'y a plus de place disponible pour ce concert.</strong></p>
@@ -93,10 +92,9 @@
                             <p>Les réservations pour cet événément sont closes.</p>
                         {% endif %}
                     </div>
-                    </div>
+                </div> {# END RESERVATIONS BLOCK #}
             {% else %}
                 <h3><strong>Cet événément est annulé</strong></h3>
-            {# END CONCERT INFOS #}
             {% endif %}
         </div>
     </div>

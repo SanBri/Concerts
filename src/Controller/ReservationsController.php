@@ -21,9 +21,13 @@ class ReservationsController extends AbstractController
         if ($resp === true) {
             $reservationRepo = $this->getDoctrine()->getRepository(Reservation::class);
             $reservations = $reservationRepo->findReservationsByUser($userId, 'Confirmé');
+            $canceledReservations = $reservationRepo->findReservationsByUser($userId, 'Annulé');
+            $pastReservations = $reservationRepo->findReservationsByUser($userId, 'Passé');
             return $this->render('reservations/reservationsList.html.twig', [
                 'title' => 'Mes réservations',
-                'reservations' => $reservations
+                'reservations' => $reservations,
+                'canceledReservations' => $canceledReservations,
+                'pastReservations' => $pastReservations
             ]);
         } else {
             return $resp;
