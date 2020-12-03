@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ConcertRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert; 
 
 /**
@@ -17,12 +18,14 @@ class Concert
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups("concertInfos:read")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message = "Veuillez préciser le nom de l'événement")
+     * @Groups("concertInfos:read")
      */
     private $name;
 
@@ -36,18 +39,21 @@ class Concert
      * @ORM\Column(type="datetime")
      * @Assert\GreaterThanOrEqual("today", message="La date est déjà passée")
      * @Assert\NotBlank(message = "Veuillez préciser la date de l'événement")
+     * @Groups("concertInfos:read")
      */
     private $date;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message = "Veuillez préciser la ville de l'événément")
+     * @Groups("concertInfos:read")
      */
     private $city;
 
     /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank(message = "Veuillez préciser l'adresse de l'événement")
+     * @Groups("concertInfos:read")
      */
     private $adress;
 
@@ -59,6 +65,7 @@ class Concert
      *      max = 9999,
      *      notInRangeMessage = " Le prix doit être compris entre {{ min }} et {{ max }}",
      * )
+     * @Groups("concertInfos:read")
      */
     private $price;
 
@@ -71,6 +78,7 @@ class Concert
      *      max = 9999,
      *      notInRangeMessage = " Entre {{ min }} et {{ max }} places doivent être disponibles",
      * )
+     * @Groups("concertInfos:read")
      */
     private $maxPlaces;
 
@@ -105,6 +113,18 @@ class Concert
      */
     private $videoURL;
 
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     * @Groups("concertInfos:read")
+     */
+    private $latitude;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     * @Groups("concertInfos:read")
+     */
+    private $longitude;
+
     public function __construct()
     {
         $this->reservations = new ArrayCollection();
@@ -135,7 +155,6 @@ class Concert
     public function setDescription(string $description): self
     {
         $this->description = $description;
-
         return $this;
     }
 
@@ -286,6 +305,30 @@ class Concert
     public function setVideoURL(?string $videoURL): self
     {
         $this->videoURL = $videoURL;
+
+        return $this;
+    }
+
+    public function getLatitude(): ?float
+    {
+        return $this->latitude;
+    }
+
+    public function setLatitude(?float $latitude): self
+    {
+        $this->latitude = $latitude;
+
+        return $this;
+    }
+
+    public function getLongitude(): ?float
+    {
+        return $this->longitude;
+    }
+
+    public function setLongitude(?float $longitude): self
+    {
+        $this->longitude = $longitude;
 
         return $this;
     }

@@ -3,9 +3,12 @@
 {% block body %}
 
 <article>
-
-    <p>Erreur 404 : Page introuvable</p>
-
+    <div class="main">
+        <p><span class="error">Erreur 404</span> : Page introuvable</p>
+        <div class="btn-block">
+            <a href="{{ path('index') }}"><input type="button" class="btn" value="Retour"></a>
+        </div>   
+    </div>
 </article>
 
 {% endblock %}

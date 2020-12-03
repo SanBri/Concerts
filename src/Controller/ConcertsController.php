@@ -5,23 +5,28 @@ namespace App\Controller;
 use DateTime;
 use App\Entity\User;
 use App\Entity\Concert;
+use App\Service\GoogleMap;
 use App\Entity\Reservation;
 use App\Service\FileUploader;
-use App\Service\YoutubeVideoCheck;
 use App\Entity\ChangePassword;
 use App\Form\ConcertSearchType;
 use App\Form\CreateConcertType;
 use App\Form\ChangePasswordType;
+use App\Service\YoutubeVideoCheck;
 use App\Form\CreateReservationType;
 use App\Controller\EmailsController;
 use Doctrine\Persistence\ObjectManager;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Constraints as Assert; 
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
@@ -31,9 +36,10 @@ class ConcertsController extends AbstractController
     * @Route("/concerts", name="concertsList")
     * @Route("/", name="index")
     */
-   public function concertsList(Request $request, ObjectManager $manager, PaginatorInterface $paginator)
+   public function concertsList(Request $request, ObjectManager $manager, PaginatorInterface $paginator, GoogleMap $map)
    {
-       $query = false;
+       $queryConcerts = null;
+       $resp = null;
        $title = "Liste des concerts";
        $concertRepo = $this->getDoctrine()->getRepository(Concert::class);
        $datas = $concertRepo->findComingConcerts('À venir');
@@ -64,21 +70,34 @@ class ConcertsController extends AbstractController
            $queryConcerts = $form->get('concertsQuery')->getData();
            $concerts = $concertRepo->findConcertSearch($queryConcerts);
            $title = 'Recherche : ' . $queryConcerts;
-           $query = true;
        }
        
        return $this->render('concerts/concertsList.html.twig', [
            'title' => $title,
            'concertsSearchForm' => $form->createView(),
            'concerts' => $concerts,
-           'query' => $query
+           'query' => $queryConcerts,
        ]);
    }
+
+    /** 
+    * @Route("/localisations_concerts/{queryConcerts}", name="concertsLocalisations", methods={"GET"})
+    */
+    public function concertsLocalisation($queryConcerts, Googlemap $map)
+    {
+        $response = null;
+        $concertRepo = $this->getDoctrine()->getRepository(Concert::class);
+        $concerts = $concertRepo->findConcertSearch($queryConcerts);
+        if ($concerts) {
+          $response = $this->json($concerts, 200, [], ['groups' => 'concertInfos:read']);
+        } 
+        return $response;
+    }
 
    /**
     * @Route("/concert/{id}", name="showConcert")
     */
-   public function show($id, Request $request, ObjectManager $manager, EmailsController $emailsCtlr)
+   public function show($id, Request $request, ObjectManager $manager, EmailsController $emailsCtlr, GoogleMap $map)
    {
        
        $concertRepo = $this->getDoctrine()->getRepository(Concert::class);
@@ -91,6 +110,8 @@ class ConcertsController extends AbstractController
            $concertMaxPlaces = $concert->getMaxPlaces();
            $remainingPlaces = $concertMaxPlaces - $concertReservations;
            $concertName = $concert->getName();
+           $concertAddress = $concert->getAdress();
+           $resp = $map->geocodeAddress($concert->getAdress());
            $notEnoughPlaces = NULL;
 
            if ($form->isSubmitted() && $form->isValid() ) {
@@ -117,11 +138,8 @@ class ConcertsController extends AbstractController
                'concert' => $concert,
                'reservationForm' => $form->createView(),
                'remainingPlaces' => $remainingPlaces,
-               'currentDate' => date('d/m/Y'),
-               'currentDay' => date('d'),
-               'currentMonth' => date('m'),
-               'currentYear' => date('Y'),
-               'notEnoughPlaces' => $notEnoughPlaces
+               'notEnoughPlaces' => $notEnoughPlaces,
+               'maps' => $resp
            ]);
 
        } else {
@@ -133,7 +151,7 @@ class ConcertsController extends AbstractController
      * @Route("/create", name="createConcert")
      * @Route("/edit/{id}/{organizerToken}", name="editConcert")
      */
-    public function concertForm($organizerToken = null, Concert $concert = null, Request $request, ObjectManager $manager, FileUploader $fileUploader, YoutubeVideoCheck $youtubeVideoCheck)
+    public function concertForm($organizerToken = null, Concert $concert = null, Request $request, ObjectManager $manager, FileUploader $fileUploader, YoutubeVideoCheck $youtubeVideoCheck, Googlemap $map)
     {
         $user = $this->getUser();
 
@@ -148,7 +166,7 @@ class ConcertsController extends AbstractController
                 if (!$concert) {
                     $currentImage = null;
                     $concert = new Concert();
-                    $title = "Ajouter un concert";
+                    $title = "Ajouter un événement";
                     if (strpos($url, 'edit')) {
                         return $this->redirectToRoute('unknownConcert');
                     }
@@ -208,8 +226,12 @@ class ConcertsController extends AbstractController
                             }
                         }
                     }
-                    $concert->setStatus('À venir');
+                    $formDataAddress = $form->get('adress')->getData();
+                    $localisation = $map->geocodeAddress($formDataAddress);
+                    $concert->setLatitude($localisation['lat']);
+                    $concert->setLongitude($localisation['lng']); 
                     $concert->setOrganizer($user);
+                    $concert->setStatus('À venir');
                     $manager->persist($concert);
                     $manager->flush();
                     return $this->redirectToRoute("showConcert", ["id" => $concert->getId()]);
@@ -301,14 +323,15 @@ class ConcertsController extends AbstractController
         }
         $resp = $this->isUserTheOrganizer($concertId, $organizerToken);
         if ($resp === true) {
+            date_default_timezone_set("Europe/Paris");
             $currentYear = date('Y');
             $form = $this->createFormBuilder($concert)
                         ->add('date', DateTimeType::class, [
-                            'years' => range($currentYear, $currentYear+3),
-                            'minutes' => array(0, 15, 30, 45),
                             'html5' => false,
-                            'format' => 'yyyyMMMdd hh:ii',
-                            'model_timezone' => "Europe/Paris"
+                            'date_format' => 'dd MMM yyyy',
+                            'model_timezone' => "Europe/Paris",
+                            'years' => range($currentYear, $currentYear+3),
+                            'minutes' => array(0, 15, 30, 45)
                         ])
                         ->getForm();
             $form->handleRequest($request);

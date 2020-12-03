@@ -12,7 +12,6 @@ class StatusFilter {
         if ( document.querySelector('.' + toShow.id).style.display !== "block" ) {
             toShow.className = 'category-btn btn currentBtn'
             document.querySelector('.' + toShow.id).style.display = "block"
-            console.log('coucou')
         }   
     }
 }

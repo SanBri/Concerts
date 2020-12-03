@@ -3,9 +3,13 @@
 {% block body %}
 
 <section>
-    <p>Êtes-vous sûr de vouloir annuler cette réservation ? </p>
-    <p><a href="{{ path('reservationsList', {'userId': app.user.id}) }}"><input type="button" value="Retour"></a>
-    <a href="{{ path('cancelReservation', {'reservationId': reservationId, 'submittedToken': submittedToken}) }}"><input type="button" value="Confirmer"></a></p>
+    <div class="main">
+        <span class="error"><p>Voulez-vous vraiment annuler cette réservation ? </p></span>
+        <div class="btn-block">
+            <p><a href="{{ path('reservationsList', {'userId': app.user.id}) }}"><input type="button" class="btn" value="Retour"></a>
+            <a href="{{ path('cancelReservation', {'reservationId': reservationId, 'submittedToken': submittedToken}) }}"><input type="button" class="btn" value="Confirmer l'annulation"></a></p>
+        </div>
+    </div>
 </section>
 
 {% endblock %}

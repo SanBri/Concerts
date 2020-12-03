@@ -36,5 +36,6 @@ services:
         arguments:
             $concerts_images_directory: '../public/images/concerts_img'
     App\Service\YouTubeVideoCheck:
+    App\Service\GoogleMap:
 
     Doctrine\Persistence\ObjectManager: '@doctrine.orm.default_entity_manager'

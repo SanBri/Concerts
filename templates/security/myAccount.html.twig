@@ -11,11 +11,12 @@
             <div class="title--line"></div>
         </div>
         <ul>
-            <li><a href="{{ path("reservationsList", {'userId': app.user.id}) }}">Mes réservations</a></li>
+            <li><a href="{{ path("reservationsList", {'userId': app.user.id}) }}"><i class="fas fa-ticket-alt"></i> Mes réservations</a></li>
             {% if app.user and app.user.role == 'Organizer' %}
-                <li><a href="{{ path("myConcertsList", {'userId': app.user.id}) }}">Mes concerts</a></li>
+                <li><a href="{{ path("myConcertsList", {'userId': app.user.id}) }}"><i class="far fa-list-alt"></i> Mes événements</a></li>
+                <li><a href="{{ path("createConcert")}}"><i class="far fa-calendar-plus"></i> Créer un événement</a></li>
             {% endif %}
-            <li><a href="{{ path('passwordChange', {'userId': app.user.id }) }}">Modifier mon mot de passe</a></li>
+            <li><a href="{{ path('passwordChange', {'userId': app.user.id }) }}"><i class="fas fa-unlock"></i> Modifier mon mot de passe</a></li>
         </ul>
 </div>
 

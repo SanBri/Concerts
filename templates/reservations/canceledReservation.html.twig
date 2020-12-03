@@ -3,8 +3,12 @@
 {% block body %}
 
 <section>
-    <p>Votre réservation a bien été annulée.</p>
-    <p><a href="{{ path('concertsList') }}">Voir les concerts</a></p>
+    <div class="main">
+        <p>Votre réservation a bien été annulée.</p>
+        <div class="btn-block">
+            <a href="{{ path('index') }}"><input type="button" class="btn" value="Rechercher un événement"></a>
+        </div>
+    </div>
 </section>
 
 {% endblock %}

@@ -5,9 +5,12 @@
 {% block body %}
 
 <article>
-
-    <p>Ce concert n'existe pas</p>
-
+    <div class="main">
+        <p><span class="error">Erreur</span> : Cet événement n'existe pas ou a été supprimé</p>
+        <div class="btn-block">
+            <a href="{{ path('index') }}"><input type="button" class="btn" value="Retour"></a>
+        </div>
+    </div>
 </article>
 
 {% endblock %}

@@ -3,9 +3,12 @@
 {% block body %}
 
 <article>
-
-    <p>Erreur : Ce concert est annulé et ne peut pas être modifié !</p>
-
+    <div class="main">
+        <p><span class="error">Erreur</span> : Cet événement est annulé et ne peut pas être modifié !</p>
+        <div class="btn-block">
+            <a href="{{ path('index') }}"><input type="button" class="btn" value="Retour"></a>
+        </div>
+    </div>
 </article>
 
 {% endblock %}

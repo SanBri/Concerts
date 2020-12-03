@@ -18,10 +18,10 @@
             </div>
             <div class="each-block">
             {% for reservation in reservations %}
-                <p><strong>Réservation n°{{ reservation.id }}</strong></p>
-                <p><strong>Concert :</strong> {{ reservation.concert.name }}<br />
-                <strong>Date :</strong> {{ reservation.concert.date | date('d/m/Y') }}<br />
-                <strong>Nombre de places réservées :</strong> {{ reservation.reservedPlaces }}</p>
+                <p><span class="important-text">Réservation n°{{ reservation.id }}</span></p>
+                <p><span class="important-text">{{ reservation.concert.name }}</span><br />
+                Date : {{ reservation.concert.date | date('d/m/Y') }}<br />
+                Nombre de places réservées : {{ reservation.reservedPlaces }}</p>
                 <div class="btn-block">
                     <p><a href="{{ path('showConcert', {'id' : reservation.concert.id}) }}"><input type="button" class="btn" value="Voir le concert"></a>
                     <a href="{{ path('confirmReservationCancel', {'reservationId': reservation.id, 'submittedToken': submittedToken}) }}"><input type="button" class="btn" value="Annuler la réservation"></a></p>
@@ -41,10 +41,10 @@
                 <div class="title--line"></div>
             </div>
             {% for canceledReservation in canceledReservations %}
-                <p><strong>Réservation n°{{ canceledReservation.id }}</strong></p>
-                <p><strong>Concert :</strong> {{ canceledReservation.concert.name }}<br />
-                <strong>Date :</strong> {{ canceledReservation.concert.date | date('d/m/Y') }}<br />
-                <strong>Nombre de places réservées :</strong> {{ canceledReservation.reservedPlaces }}</p>
+                <p><span class="important-text">Réservation n°{{ canceledReservation.id }}</span></p>
+                <p><span class="important-text">{{ canceledReservation.concert.name }}</span><br />
+                Date :</strong> {{ canceledReservation.concert.date | date('d/m/Y') }}<br />
+                Nombre de places réservées : {{ canceledReservation.reservedPlaces }}</p>
                 <hr />
             {% endfor %}
         {% else %}
@@ -60,10 +60,10 @@
                 <div class="title--line"></div>
             </div>
             {% for pastReservation in pastReservations %}
-                <p><strong>Réservation n°{{ pastReservation.id }}</strong></p>
-                <strong>Date :</strong> {{ pastReservation.concert.date | date('d/m/Y') }}
-                <p><strong>Concert :</strong> {{ pastReservation.concert.name }}
-                <strong>Nombre de places réservées :</strong> {{ pastReservation.reservedPlaces }}
+                <p><span class="important-text">Réservation n°{{ pastReservation.id }}</span></p>
+                <p><span class="important-text">{{ pastReservation.concert.name }}</span><br />
+                Date : {{ pastReservation.concert.date | date('d/m/Y') }}<br />
+                Nombre de places réservées : {{ pastReservation.reservedPlaces }}</p>
                 <hr />
             {% endfor %}
         {% else %}

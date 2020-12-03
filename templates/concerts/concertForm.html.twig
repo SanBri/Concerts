@@ -2,7 +2,7 @@
 
 {% block body %}
 
-    <section><div class="create-block">
+    <section><div class="main">
         <div class="create-block__ title">
             <h2>{{ title }}</h2>
             <div class="create-block__ title--line"></div>
@@ -176,8 +176,9 @@
                         }}</p>
                     </div>
                 </div>
+        </div>
 
-                <div class="btn-block">
+                        <div class="btn-block">
                     <button class="btn" type="submit">
                         {% if editMode %}
                             Enregister les modifications
@@ -193,7 +194,6 @@
                     <button class="btn" type="button">Annuler</button></a>
             {{ form_end(createForm) }}
                 </div>
-        </div>
     </div></section>
 
 {% endblock %}

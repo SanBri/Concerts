@@ -22,6 +22,49 @@
                 {{ concert.name }}
                 <div class="title--line"></div>
             </div>
+            
+            {# <div class="event-infos-smartphone smartphone-block">
+                <p title="Date"><i class="far fa-calendar-alt"></i> {{ concert.date | date('d/m/Y') }}
+                <i class="fas fa-clock"></i> {{ concert.date | date('h:i', 'Europe/Paris') }}</p>
+                <i class="fas fa-map-marker-alt"></i> {{ concert.adress }} à {{ concert.city }}</p>
+                {% if concert.date > date() %}
+                    {% if concert.maxPlaces > concert.reservation  %}
+                        <p title="Places Disponibles"><i class="fas fa-users"></i> {{ remainingPlaces }}
+                        {% if remainingPlaces > 1 %}
+                            places restantes 
+                        {% elseif remainingPlaces == 1 %}
+                            place restante
+                        {% endif %}
+                        </p>
+                        {% if app.user %}
+                        <input type="integer" value="Nb places test">
+                        <input type="submit" class="btn" value="Réserver">
+                        {{ form_start(reservationForm) }}
+                            <p>{{ form_errors(reservationForm)}}
+                            <p>{{ form_row(reservationForm.reservedPlaces, {
+                                'required': 'true',
+                                'label': 'Nombre de places : ',
+                                'attr': {
+                                    'min': 1, 
+                                    } 
+                                })
+                            }}</p>
+                            <div class="btn-block">
+                                <input type="submit" class="btn" value="Réserver">
+                            </div>
+                        {{ form_end(reservationForm) }}
+                        {% else %}
+                            <p>Veuillez vous connecter pour Réserver</p>
+                            <button class="btn"><a href="{{ path("login") }}">Connexion</a></button>
+                        {% endif %}
+                    {% else %}
+                        <p><span id="full-reservations">COMPLET</span></p>
+                    {% endif %}
+                {% else %}
+                    <p>Les réservations pour cet événément sont closes</p>
+                {% endif %}
+            </div> #}
+
             <p>Organisé par {{ concert.organizer.email }}</p>
 
             {% if concert.imagePath %}
@@ -44,6 +87,9 @@
                         <p title="Date"><i class="far fa-calendar-alt"></i> {{ concert.date | date('d/m/Y') }}</p>
                         <p title="Heure"><i class="fas fa-clock"></i> {{ concert.date | date('h:i', 'Europe/Paris') }}</p>
                         <p title="Lieu"><i class="fas fa-map-marker-alt"></i> {{ concert.adress }} à {{ concert.city }}</p>
+                        <input type="hidden" id="lat" value="{{ maps.lat }}">
+                        <input type="hidden" id="lng" value="{{ maps.lng }}">
+                        <div id="map" data-lat="{{ maps.lat }}" data-lng="{{ maps.lng }}"></div>
                     </div>
                 </div> {# END INFOS BLOCK #}
 
@@ -86,7 +132,8 @@
                                     <button class="btn"><a href="{{ path("login") }}">Connexion</a></button>
                                 {% endif %}
                             {% else %}
-                                <p><strong>Il n'y a plus de place disponible pour ce concert.</strong></p>
+                                <p><span id="full-reservations">COMPLET</span></p>
+                                <p>Il n'y a plus de place disponible pour ce concert</p>
                             {% endif %}
                         {% else %}
                             <p>Les réservations pour cet événément sont closes.</p>

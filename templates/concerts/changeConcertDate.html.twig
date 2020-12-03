@@ -8,11 +8,11 @@
         <div class="title--line"></div>
     </div>
     
-    <h3>Événement : {{concert.name}} - <em>{{concert.date | date('d/m/Y à h:i')}}</em></h3>
+    <h3 class="important-text">{{concert.name}} - <em>{{concert.date | date('d/m/Y à h:i')}}</em></h3>
 
     {{ form_start(newDateForm) }}
         <div class="create-block__form__each--label">
-            <label>Changer la date :</label>
+            <label>Modifier la date :</label>
         </div>
         <p>{{ form_row(newDateForm.date, {
             'required': 'true',
