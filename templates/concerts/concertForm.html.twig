@@ -167,13 +167,14 @@
                         <span class="error"><p>{{ message }}</p></span>
                     {% endfor %}
                     <div class="create-block__form__each--label">
-                        <label>Intégrer une vidéo YouTube : </label>
+                        <label>Intégrer une vidéo YouTube : <i class="far fa-question-circle" title="Veuillez coller l'URL complète de la vidéo YouTube"></i></label>
                     </div>
                     <div class="create-block__form__each--input">
                         {{ form_row(createForm.videoURL, {
                             'label': ' ',
                             }) 
-                        }}</p>
+                        }}
+                        </p>
                     </div>
                 </div>
         </div>

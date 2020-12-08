@@ -79,9 +79,10 @@ class GoogleMap {
 }
 
 map = document.getElementById('map')
-lat = parseFloat(map.dataset.lat)
-lng = parseFloat(map.dataset.lng)
-if (map) {
+
+if (document.getElementById('map') || document.getElementById('map')) {
+    lat = parseFloat(map.dataset.lat)
+    lng = parseFloat(map.dataset.lng)
     function initMap() {
         if (lat && lng) {
             map = new GoogleMap('map', lat, lng, 15)

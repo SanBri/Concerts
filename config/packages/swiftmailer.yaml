@@ -1,14 +1,2 @@
-swiftmailer:    
-    transport:        "smtp"
-    host:             "smtp.gmail.com"
-    username:         "manoir.edelweiss@gmail.com"
-    password:         "@r0ad-Way"
-    auth_mode:        login
-    port:             587
-    encryption:       null
-    delivery_address: "sandro.brignoli@outlook.fr"
-    spool:            { type: memory }
-    stream_options:
-      ssl:
-        allow_self_signed: true
-        verify_peer: false
+swiftmailer:
+    disable_delivery: true

@@ -26,9 +26,11 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Constraints as Assert; 
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+
 
 class ConcertsController extends AbstractController
 {
@@ -99,54 +101,53 @@ class ConcertsController extends AbstractController
     */
    public function show($id, Request $request, ObjectManager $manager, EmailsController $emailsCtlr, GoogleMap $map)
    {
-       
-       $concertRepo = $this->getDoctrine()->getRepository(Concert::class);
-       $concert = $concertRepo->find($id);
-       if ($concert) {
-           $reservation = new Reservation();
-           $form = $this->createForm(CreateReservationType::class, $reservation);
-           $form->handleRequest($request);
-           $concertReservations = $concert->getReservation();
-           $concertMaxPlaces = $concert->getMaxPlaces();
-           $remainingPlaces = $concertMaxPlaces - $concertReservations;
-           $concertName = $concert->getName();
-           $concertAddress = $concert->getAdress();
-           $resp = $map->geocodeAddress($concert->getAdress());
-           $notEnoughPlaces = NULL;
+        $concertRepo = $this->getDoctrine()->getRepository(Concert::class);
+        $concert = $concertRepo->find($id);
+        if ($concert) {
+            $reservation = new Reservation();
+            $form = $this->createForm(CreateReservationType::class, $reservation);
+            $form->handleRequest($request);
+            $concertReservations = $concert->getReservation();
+            $concertMaxPlaces = $concert->getMaxPlaces();
+            $remainingPlaces = $concertMaxPlaces - $concertReservations;
+            $concertName = $concert->getName();
+            $concertAddress = $concert->getAdress();
+            $resp = $map->geocodeAddress($concert->getAdress());
+            $notEnoughPlaces = NULL;
+            if ($form->isSubmitted() && $form->isValid()) {
+                $formDatasPlaces = $form->get('reservedPlaces')->getData();
+                if ($formDatasPlaces <= $remainingPlaces) {
+                    $reservation->setUser($this->getUser())
+                                ->setConcert($concert)
+                                ->setMailSent(false)
+                                ->setStatus('En cours');
+                    $manager->persist($reservation);
+                    $manager->flush();
+                    $reservedPlaces = $reservation->getReservedPlaces();
+                    $concert->setReservation($concertReservations + $reservedPlaces);
+                    $manager->persist($concert);
+                    $manager->flush();
+                    return $this->redirectToRoute("sendReservationConfirmationEmail", ['reservationId' => $reservation->getId()]);
+                } else {
+                    $notEnoughPlaces = "Il n'y a pas assez de place disponible";
+                }
+                
+            }
 
-           if ($form->isSubmitted() && $form->isValid() ) {
-               $formDatasPlaces = $form->get('reservedPlaces')->getData();
-               if ($formDatasPlaces <= $remainingPlaces) {
-                   $reservation->setUser($this->getUser())
-                               ->setConcert($concert)
-                               ->setMailSent(false)
-                               ->setStatus('En cours');
-                   $manager->persist($reservation);
-                   $manager->flush();
-                   $reservedPlaces = $reservation->getReservedPlaces();
-                   $concert->setReservation($concertReservations + $reservedPlaces);
-                   $manager->persist($concert);
-                   $manager->flush();
-                   return $this->redirectToRoute("sendReservationConfirmationEmail", ['reservationId' => $reservation->getId()]);
-               } else {
-                   $notEnoughPlaces = "Il n'y a pas assez de place disponible";
-               }
-           }
-   
-           return $this->render('concerts/showConcert.html.twig', [
-               'title' => $concertName,
-               'concert' => $concert,
-               'reservationForm' => $form->createView(),
-               'remainingPlaces' => $remainingPlaces,
-               'notEnoughPlaces' => $notEnoughPlaces,
-               'maps' => $resp
-           ]);
+            return $this->render('concerts/showConcert.html.twig', [
+                'title' => $concertName,
+                'concert' => $concert,
+                'reservationForm' => $form->createView(),
+                'remainingPlaces' => $remainingPlaces,
+                'notEnoughPlaces' => $notEnoughPlaces,
+                'maps' => $resp,
+            ]);
 
-       } else {
-           return $this->redirectToRoute("unknownConcert");
-       }
-   }
-
+        } else {
+            return $this->redirectToRoute("unknownConcert");
+        }
+    }
+    
     /**
      * @Route("/create", name="createConcert")
      * @Route("/edit/{id}/{organizerToken}", name="editConcert")

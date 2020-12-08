@@ -426,13 +426,13 @@ label {
 
 .query_map_block {
 	width: 50%;
+	display: flex;
 }
 
 .query_map_block #map {
 	width: 80%;
 	height: 80%;
 	margin: auto;
-	margin-top: 8%;
 	border-radius: 10px;
 	border: 1px solid purple;
 }
@@ -480,8 +480,9 @@ label {
 
 .event-description {
 	width: 0;
-	border-right: 0.5px solid black;
 	text-align: center;
+	background-color: rgb(247, 248, 250);
+
 	overflow: hidden;
 }
 .event-description:hover .title--line {
@@ -507,7 +508,7 @@ label {
 	overflow: hidden;
 	padding: 20px;
 	border-radius: 10px;
-	background-color: rgba(104, 93, 104, 0.2);
+	background-color: rgba(104, 93, 104, 0.1);
 }
 .event-side-block:hover .title--line {
 	transition: 0.45s;
@@ -662,6 +663,17 @@ label {
 }
 
 /* MEDIA QUERY */
+
+	/* PETIT ÉCRAN */
+	@media all and (max-width: 1400px) {
+	
+		/* EVENTS LIST */
+		.main {
+			width: 90%;
+		}
+	
+	
+	}
 
     /* SMARTPHONE */
     @media all and (max-width: 600px) {

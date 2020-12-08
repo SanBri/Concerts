@@ -7,7 +7,7 @@
 {% endif %}
 
 {% block body %}
-    
+
     <div class="event-content">
         <div class="event-description">
             {% if app.user and app.user.id == concert.organizer.id and concert.status == "À venir" %}
@@ -23,7 +23,8 @@
                 <div class="title--line"></div>
             </div>
             
-            {# <div class="event-infos-smartphone smartphone-block">
+            {# <div class="event-infos-smartphone smartphone-block" id="smartphoneBlock">
+                {% set smartphone = <iframe src="" frameborder="0"></iframe>%}
                 <p title="Date"><i class="far fa-calendar-alt"></i> {{ concert.date | date('d/m/Y') }}
                 <i class="fas fa-clock"></i> {{ concert.date | date('h:i', 'Europe/Paris') }}</p>
                 <i class="fas fa-map-marker-alt"></i> {{ concert.adress }} à {{ concert.city }}</p>
@@ -39,7 +40,6 @@
                         {% if app.user %}
                         <input type="integer" value="Nb places test">
                         <input type="submit" class="btn" value="Réserver">
-                        {{ form_start(reservationForm) }}
                             <p>{{ form_errors(reservationForm)}}
                             <p>{{ form_row(reservationForm.reservedPlaces, {
                                 'required': 'true',
@@ -94,7 +94,7 @@
                 </div> {# END INFOS BLOCK #}
 
                 <div class="event-side-block event-reservations">
-                    <div class="event-side-block__text">
+                    <div class="event-side-block__text" id="eventReservations">
                         <div class="title">
                             <h2>Réservations</h2>
                             <div class="title--line"></div>
