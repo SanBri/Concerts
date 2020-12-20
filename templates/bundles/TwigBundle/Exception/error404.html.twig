@@ -1,15 +1,13 @@
 {% extends 'base.html.twig' %}
-
-{% set title = "Événement introuvable" %}
-
+{% set title = 'Erreur 404' %}
 {% block body %}
 
 <article>
     <div class="main">
-        <p><span class="error">Erreur</span> : Cet événement n'existe pas ou a été supprimé</p>
+        <p><span class="error">Erreur 404</span> : Page introuvable</p>
         <div class="btn-block">
             <a href="{{ path('index') }}"><input type="button" class="btn" value="Retour"></a>
-        </div>
+        </div>   
     </div>
 </article>
 

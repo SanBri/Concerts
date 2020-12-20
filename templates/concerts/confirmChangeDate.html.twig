@@ -4,8 +4,8 @@
 
 {# {{ newDate | date('d-m-Y-h-i', "Europe/Paris") }}<br />
 {% set currentDate = date() %}
-{{ currentDate | date('d/m/Y h:i', "Europe/Paris") }} #}
-{% set newDate = newDate | date('d-m-Y-h-i') %}   
+{{ currentDate | date('d/m/Y h:i', ) }} #}
+{% set newDate = newDate | date('d-m-Y-h-i')  %}   
 
     <section><div class="main">
         {% set confirmToken = csrf_token(concert.id) %}
@@ -15,10 +15,10 @@
             <div class="title--line"></div>
         </div>
 
-        <h3>{{concert.name}}</h3>
+        <h3 class="important-text">{{concert.name}}</h3>
 
         <p><strong>Voulez-vous vraiment reporter cet événément au {{ newDate | date('d/m/Y à H:i') }}</strong> ? <br />
-        Un mail informatif sera envoyé à toutes les personnes ayant une réservation pour cet événement</p>
+        <p class="details-text">Un mail informatif sera envoyé à toutes les personnes ayant une réservation pour cet événement</p>
 
         <div class="btn-block">
             <p><a href="{{ path('showConcert', {'id': concert.id}) }}"><input type="button" class="btn" value="Retour"></a>

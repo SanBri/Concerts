@@ -46,7 +46,7 @@ class ConcertsController extends AbstractController
        $concertRepo = $this->getDoctrine()->getRepository(Concert::class);
        $datas = $concertRepo->findComingConcerts('À venir');
        $concerts = $paginator->paginate($datas, $request->query->getInt('page', 1), 8);
-       //* Actualise le statut des événements déjà passés :
+       // Actualise le statut des événements déjà passés :
        date_default_timezone_set("Europe/Paris");
        $date = time();
        foreach ($datas as $concert) {
@@ -324,13 +324,11 @@ class ConcertsController extends AbstractController
         }
         $resp = $this->isUserTheOrganizer($concertId, $organizerToken);
         if ($resp === true) {
-            date_default_timezone_set("Europe/Paris");
             $currentYear = date('Y');
             $form = $this->createFormBuilder($concert)
                         ->add('date', DateTimeType::class, [
                             'html5' => false,
                             'date_format' => 'dd MMM yyyy',
-                            'model_timezone' => "Europe/Paris",
                             'years' => range($currentYear, $currentYear+3),
                             'minutes' => array(0, 15, 30, 45)
                         ])

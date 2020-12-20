@@ -1,3 +1,6 @@
+/* FONTS */
+@import url('https://fonts.googleapis.com/css2?family=Sarala&family=Lato&family=Yanone+Kaffeesatz&family=Catamaran&display=swap');
+
 /* RESET START */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
@@ -44,22 +47,8 @@ table {
 }
 /* RESET END */
 
-/* FONTS */
-@font-face {
-    font-family: "Lato";
-    src:url('fonts/Lato-Regular.ttf') format('truetype')
-}
-
-@font-face {
-	font-family: "Alatsi";
-	src:url('/public/fonts/Alatsi/alatsi-regular-webfont.ttf') format('truetype'),
-		url('/public/fonts/Alatsi/alatsi-regular-webfont.eot') format('eot'),
-		url('/public/fonts/Alatsi/alatsi-regular-webfont.woff') format('woff'),
-		url('/public/fonts/Alatsi/alatsi-regular-webfont.svg') format('svg'),
-}
-
 .error {
-	color: red;
+	color: purple; 
 	font-weight: bold;
 }
 
@@ -82,11 +71,15 @@ table {
 	padding: 3px;
 }
 
-/* GENERAL */
+/* GÉNÉRAL */
+
+p, a, h3, li {
+	font-family: "Catamaran";
+}
+
 .container__body {
 	line-height: 1.5;
 	padding-top: 50px;
-	padding-bottom: 20px;
 	font-size: 20px;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
@@ -95,12 +88,6 @@ table {
 	box-sizing: border-box;
 	background-color: rgb(247, 248, 250);
 	position: relative;
-}
-
-.container__footer {
-	border-top: solid 0.5px black;
-	background-color: white; /* SI L'IMAGE NE S'AFFICHE PAS */
-	height: 300px;
 }
 
 .main {
@@ -134,7 +121,7 @@ label {
 
 .title {
 	margin-bottom: 10px;
-	font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+	font-family: 'Sarala';
 	font-size: 1.8rem;
 	color: purple;
 	transition: 0.20s;
@@ -164,6 +151,7 @@ label {
 	border-radius: 5%;
 	transition: 0.25s;
 	font-family: "Lato";
+	font-weight: bold;
 }
 .btn:hover {
 	background: purple;
@@ -245,6 +233,7 @@ label {
 	justify-content: flex-end;
 	align-items: center;
 	font-size: 2em;
+
 }
 .container__header i {
 	cursor: pointer;
@@ -269,11 +258,10 @@ label {
 	top: 54px;
 	z-index: 9999;
 	padding: 10px;
-	background-color: purple;
-	filter: drop-shadow(0px 10px 5px rgba(206, 182, 206, 0.4));
+	background-color: rgba(128, 0, 128, 0.95);
 	color: white;
-	font-size: 1em;
-	line-height: 1.4em;
+	font-size: 1.3rem;
+	line-height: 1.9;
 }
 
 .each-parameter {
@@ -290,6 +278,45 @@ label {
 }
 .user-parameters--active li a i {
 	transition: 0s;
+}
+
+/* FOOTER */
+
+.container__footer {
+	border-top: solid 0.5px black;
+	padding: auto;
+	display: flex;
+	flex-direction: row;
+	height: 50px;
+	padding: 20px;
+	justify-content: center;
+}
+
+.social_networks {
+	margin: auto;
+    text-align: center;
+    font-family: "Argh", Helvetica, sans-serif;
+    font-weight: bold;
+}
+
+.social_networks_icn i {
+    color: rgba(126, 119, 119, 0.679);
+    font-size: 3em;
+    transition-property: color; 
+    transition-duration: 1s; 
+    padding-left: 5px;
+}
+
+.fa-facebook:hover {
+    color: rgb(66, 103, 178);
+}
+
+.fa-twitter:hover {
+    color: rgb(0, 172, 237);
+}
+
+.fa-instagram:hover {
+    color: rgb(191, 48, 135);
 }
 
 /* LOGIN & REGISTER */
@@ -359,14 +386,16 @@ label {
 	justify-content: center;
 }
 .search-event-block__content {
-	padding: 20px;
+	width: 39%;
 	border-radius: 2px;
 	background: rgba(255, 255, 255, 0.6);
 	filter: drop-shadow(0px 10px 5px rgba(128, 0, 128, 0.4));
 	color: rgba(128, 0, 128, 0.4);
+	padding: 20px;
 }
 .search-event-block .title {
-	font-family: "Alatsi";
+	font-family: "Yanone Kaffeesatz";
+	font-size: 2rem;
 }
 .search-event-block__form {
 	width: 100%;
@@ -465,31 +494,36 @@ label {
 
 /* SHOW EVENT */
 
+.event-introduction {
+	text-align: center;
+	margin-top: 10px;
+}
+
+.smartphone-version {
+	display: none;
+}
+
 .event-content {
 	display: flex;
 	min-height: 95vh;
 	flex-direction: row; 
 	justify-content: space-between;
-	border: solid 1px black;
 	text-align: center;
-}
-
-.event-infos-smartphone {
-	display: none;
 }
 
 .event-description {
 	width: 0;
 	text-align: center;
 	background-color: rgb(247, 248, 250);
-
 	overflow: hidden;
 }
-.event-description:hover .title--line {
-	width: 90%;
+
+.video-block {
+	margin-bottom: 10px;
 }
 
 .event-sides-block {
+	margin-top: -70px;
 	width: 40%;
 	height: 95vh;
 	display: flex;
@@ -662,6 +696,24 @@ label {
 	cursor: initial;
 }
 
+/* MY ACCOUNT */
+
+.account-paramaters-block {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	margin-top : 20px;
+}
+
+.account__each-parameter {
+	padding: 20px;
+	margin: 5px;
+	font-size: 1.3rem;
+}
+.account__each-parameter i {
+	font-size: 3rem;
+}
+
 /* MEDIA QUERY */
 
 	/* PETIT ÉCRAN */
@@ -671,16 +723,33 @@ label {
 		.main {
 			width: 90%;
 		}
-	
-	
+
+		/* SHOW EVENT */
+		.event-sides-block {
+			margin-top: -20px;
+			margin-bottom: 200px;
+		}
+
+		.event-side-block {
+			overflow: initial;
+			margin-bottom: 20px;
+		}
+
+		.event-side-block__text p {
+			line-height: 1.5;
+		}
+
 	}
 
     /* SMARTPHONE */
     @media all and (max-width: 600px) {
 
 		/* GÉNÉRAL */
+		.title {
+			font-size: 1.4rem;
+		}
 		.each-block {
-			width: 10px;
+			width: 100%;
 			padding: 0;
 		}
 
@@ -693,11 +762,6 @@ label {
 			padding-left: 10px;
 		}
 
-		.user-parameters--active {
-			font-size: 1.2rem;
-			line-height: 1.9;
-		}
-
 		/* LOGIN & REGISTER */
 		.login-block {
 			width: 60%;
@@ -708,34 +772,137 @@ label {
 			width: 95%;
 		}
 
+		.search-event-block__content {
+			width: 90%;
+		}
+		.search-event-block .title {
+			font-size: 1.6rem;
+		}
+
+		.query {
+			flex-direction: column;
+		}
+
+		.query .title {
+		font-size: 1rem;
+		}
+
+		.query p, .query a {
+			font-size: 0.9rem;
+		}
+
+		.query_map_block {
+			width: 100%;
+			height: 200px;
+		}
+
 		.each-event {
+			width: 100%;
 			flex-direction: column;
 		}
 
 		/* SHOW EVENT */
+		.desktop-version {
+			display: none;
+		}
+
+		.smartphone-version {
+			display: block;
+		}
+
+		.event-introduction .title, .event-content .title {
+			font-size: 1.4rem;
+		}
+
 		.event-content {
-			flex-direction: column;
+			flex-direction: column-reverse;
+			justify-content: initial;
+			width: 100%;
+			min-height: 0;
 		}
 
 		.event-description {
-			width: 100%;
+			width: 70%;
 		}
 
-		.event-infos-smartphone {
-			display: inline-block;
-			background-color: rgba(247, 248, 250, 0.8);
-			filter: drop-shadow(0px 10px 5px rgba(206, 182, 206, 0.7));
-			padding: 10px;
-			margin: 0 auto 10px auto;
-			margin-bottom: 20px;
-			line-height: 1.8;
+		.video-block {
+			position: relative;
+			padding-bottom: 56.25%;
+			padding-top: 30px;
+			height: 0;
+			overflow: hidden;
 		}
-		.event-infos-smartphone i {
-			color: purple;
+
+		.video-block iframe, .video-block object, .video-block embed {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
 		}
 
 		.event-sides-block {
+			width: 100%;
+			height: auto;
+			margin-top: 0px;
+			margin-bottom: 10px;
+		}
+		.event-sides-block #map {
 			display: none;
+		}
+		.event-infos {
+			border-top-left-radius: 10px 10px;
+			border-top-right-radius: 10px 10px;
+		}
+		.event-reservations {
+			border-bottom-left-radius: 10px 10px;
+			border-bottom-right-radius: 10px 10px;
+		}
+		.event-side-block {
+			border-radius: 0;
+		}
+		.event-side-block__text p {
+			line-height: 1.4;
+		}
+
+		/* EVENT CREATE/EDIT FORM */
+		.create-block {
+			width: 98%;
+			padding: 10px 0;
+			margin-top: 0px;
+		}
+
+		.create-block__form {
+			width: 95%;
+			margin: auto;
+			padding: 5px;
+			margin-bottom: 15px;
+		}
+
+		.create-block__form__each {
+			width: 99%;
+		}
+
+		.create-block__form input {
+			width: 80%;
+		}
+		.create-block__form input:focus {
+			width: 100%;
+		}		
+		#create_concert_date_date {
+			display: block;
+		}
+
+		/* MY ACCOUNT */
+		.account-paramaters-block {
+			display: flex;
+			flex-direction: column;
+		}
+		.account__each-parameter {
+			font-size: 1.2rem;
+		}
+		.account__each-parameter i {
+			font-size: 2rem;
 		}
 
 	} /* END SMARTPHONE */

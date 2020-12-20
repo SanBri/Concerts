@@ -8,70 +8,36 @@
 
 {% block body %}
 
-    <div class="event-content">
-        <div class="event-description">
-            {% if app.user and app.user.id == concert.organizer.id and concert.status == "À venir" %}
-                <div class="btn-block">
-                    {% set organizerToken = csrf_token('concert-organizer') %}
-                    <p><a href="{{ path('editConcert', {'id': concert.id, 'organizerToken': organizerToken}) }}"><input type="button" class="btn" value="Modifier les informations"></a>
-                    <a href="{{ path('changeConcertDate', {'id': concert.id, 'organizerToken': organizerToken}) }}"><input type="button" class="btn" value="Reporter cet événement"></a>
-                    <a href="{{ path('confirmCancelConcert', {'id': concert.id, 'organizerToken': organizerToken}) }}"><input type="button" class="btn" value="Annuler cet événement"></a></p>
-                </div>
-            {% endif %}
-            <div class="title">
-                {{ concert.name }}
-                <div class="title--line"></div>
+    <div class="event-introduction">
+        {% if app.user and app.user.id == concert.organizer.id and concert.status == "À venir" %}
+            <div class="btn-block desktop-version">
+                {% set organizerToken = csrf_token('concert-organizer') %}
+                <p><a href="{{ path('editConcert', {'id': concert.id, 'organizerToken': organizerToken}) }}"><input type="button" class="btn" value="Modifier les informations"></a>
+                <a href="{{ path('changeConcertDate', {'id': concert.id, 'organizerToken': organizerToken}) }}"><input type="button" class="btn" value="Reporter cet événement"></a>
+                <a href="{{ path('confirmCancelConcert', {'id': concert.id, 'organizerToken': organizerToken}) }}"><input type="button" class="btn" value="Annuler cet événement"></a></p>
             </div>
-            
-            {# <div class="event-infos-smartphone smartphone-block" id="smartphoneBlock">
-                {% set smartphone = <iframe src="" frameborder="0"></iframe>%}
-                <p title="Date"><i class="far fa-calendar-alt"></i> {{ concert.date | date('d/m/Y') }}
-                <i class="fas fa-clock"></i> {{ concert.date | date('h:i', 'Europe/Paris') }}</p>
-                <i class="fas fa-map-marker-alt"></i> {{ concert.adress }} à {{ concert.city }}</p>
-                {% if concert.date > date() %}
-                    {% if concert.maxPlaces > concert.reservation  %}
-                        <p title="Places Disponibles"><i class="fas fa-users"></i> {{ remainingPlaces }}
-                        {% if remainingPlaces > 1 %}
-                            places restantes 
-                        {% elseif remainingPlaces == 1 %}
-                            place restante
-                        {% endif %}
-                        </p>
-                        {% if app.user %}
-                        <input type="integer" value="Nb places test">
-                        <input type="submit" class="btn" value="Réserver">
-                            <p>{{ form_errors(reservationForm)}}
-                            <p>{{ form_row(reservationForm.reservedPlaces, {
-                                'required': 'true',
-                                'label': 'Nombre de places : ',
-                                'attr': {
-                                    'min': 1, 
-                                    } 
-                                })
-                            }}</p>
-                            <div class="btn-block">
-                                <input type="submit" class="btn" value="Réserver">
-                            </div>
-                        {{ form_end(reservationForm) }}
-                        {% else %}
-                            <p>Veuillez vous connecter pour Réserver</p>
-                            <button class="btn"><a href="{{ path("login") }}">Connexion</a></button>
-                        {% endif %}
-                    {% else %}
-                        <p><span id="full-reservations">COMPLET</span></p>
-                    {% endif %}
-                {% else %}
-                    <p>Les réservations pour cet événément sont closes</p>
-                {% endif %}
-            </div> #}
+            <div class="btn-block smartphone-version">
+                <p><a href="{{ path('editConcert', {'id': concert.id, 'organizerToken': organizerToken}) }}"><input type="button" class="btn" value="Modifier"></a>
+                <a href="{{ path('changeConcertDate', {'id': concert.id, 'organizerToken': organizerToken}) }}"><input type="button" class="btn" value="Reporter"></a>
+                <a href="{{ path('confirmCancelConcert', {'id': concert.id, 'organizerToken': organizerToken}) }}"><input type="button" class="btn" value="Annuler"></a></p>
+            </div>
 
-            <p>Organisé par {{ concert.organizer.email }}</p>
+        {% endif %}
+        <div class="title">
+            {{ concert.name }}
+            <div class="title--line"></div>
+        </div>
+    </div>
 
+    <div class="event-content">
+        <div class="event-description">  
             {% if concert.imagePath %}
                 <img src="/images/concerts_img/{{concert.imagePath}}" alt="{{concert.name}}" width="300">
             {% endif %}
             {% if concert.videoURL %}
-                <p><iframe width="560" height="315" src="https://www.youtube.com/embed/{{concert.videoURL}}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
+                <div class="video-block">
+                    <p><iframe width="560" height="315" src="https://www.youtube.com/embed/{{concert.videoURL}}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
+                </div>
             {% endif %}
             <p>{{ concert.description }}</p>
         </div> {# END DESCRIPTION BLOCK #}
@@ -85,7 +51,7 @@
                             <div class="title--line"></div>
                         </div>
                         <p title="Date"><i class="far fa-calendar-alt"></i> {{ concert.date | date('d/m/Y') }}</p>
-                        <p title="Heure"><i class="fas fa-clock"></i> {{ concert.date | date('h:i', 'Europe/Paris') }}</p>
+                        <p title="Heure"><i class="fas fa-clock"></i> {{ concert.date | date('h:i') }}</p>
                         <p title="Lieu"><i class="fas fa-map-marker-alt"></i> {{ concert.adress }} à {{ concert.city }}</p>
                         <input type="hidden" id="lat" value="{{ maps.lat }}">
                         <input type="hidden" id="lng" value="{{ maps.lng }}">
@@ -139,7 +105,7 @@
                             <p>Les réservations pour cet événément sont closes.</p>
                         {% endif %}
                     </div>
-                </div> {# END RESERVATIONS BLOCK #}
+                </div> {# END RESERVATIONS BLOCK  #}
             {% else %}
                 <h3><strong>Cet événément est annulé</strong></h3>
             {% endif %}

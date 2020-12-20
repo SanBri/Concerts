@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width initial-scale=1.0">
         <title>{% block title %} {{ title }} {% endblock %}</title>
-        {% block stylesheets %} 
+        {% block stylesheets %}  
             <link rel="stylesheet" href="{{ asset('css/style.css') }}">
             <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css">
         {% endblock %}
@@ -25,7 +25,7 @@
                         <div class="user-parameters--active">
                             <p>{{ app.user.email}}</p>
                             <div class="each-parameter">
-                                <a href="{{ path('myAccount', {'userId': app.user.id}) }}"><i class="fas fa-user-circle"></i> Mon compte</a>
+                                <li><a href="{{ path('myAccount', {'userId': app.user.id}) }}"><i class="fas fa-user-circle"></i> Mon compte</a></li>
                             </div>
                             <div class="each-parameter">
                                 <li><a href="{{ path("reservationsList", {'userId': app.user.id}) }}"><i class="fas fa-ticket-alt"></i> Mes réservations</a></li>
@@ -54,11 +54,16 @@
         <div class="container__body">
             {% block body %}{% endblock %}
         </div>
-        <div class="container__footer">
-            <footer>
-                <p>Ceci est le footer</p>
-            </footer>
-        </div>
+        <footer>
+            <div class="container__footer">
+                <div class="social_networks">
+                    <div class="social_networks_icn">
+                        <a href="https://www.facebook.com" target="_blank"><i class="fab fa-facebook"></i></a>
+                        <a href="https://twitter.com" target="_blank"><i class="fab fa-twitter"></i></a>
+                        <a href="https://www.instagram.com/" target="_blank"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+        </footer>
     </div>
     {% block javascripts %}
         <script src="{{ asset('js/UserMenu.js') }}"></script>

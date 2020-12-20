@@ -67,7 +67,7 @@ class GoogleMap {
         let activeBlock = document.getElementById(toShow)
         activeBlock.style.transition = '0.45s' 
         activeBlock.style.backgroundColor = 'rgba(104, 93, 104, 0.3)'
-        activeBlock.style.border = '0.5px solid purple'
+        activeBlock.style.filter = 'drop-shadow(0px 10px 5px rgba(206, 182, 206, 0.7));'
     }
 
     hide(toHide) {
@@ -80,7 +80,7 @@ class GoogleMap {
 
 map = document.getElementById('map')
 
-if (document.getElementById('map') || document.getElementById('map')) {
+if (document.getElementById('map') ) {
     lat = parseFloat(map.dataset.lat)
     lng = parseFloat(map.dataset.lng)
     function initMap() {

@@ -12,7 +12,7 @@ class ErrorsController extends AbstractController
      */
     public function error404()
     {
-        return $this->render('errors/error404.html.twig', [
+        return $this->render('bundles/TwigBundle/Exception/error404.html.twig', [
             'title' => 'Erreur 404',
         ]);
     }
@@ -22,7 +22,7 @@ class ErrorsController extends AbstractController
      */
     public function error403()
     {
-        return $this->render('errors/error403.html.twig', [
+        return $this->render('bundles/TwigBundle/Exception/error403.html.twig', [
             'title' => 'Erreur 403',
         ]);
     }
@@ -33,7 +33,7 @@ class ErrorsController extends AbstractController
     public function unknownConcert()
     {
         return $this->render('errors/unknownConcert.html.twig', [
-            'title' => 'Concert introuvable',
+            'title' => 'Événement introuvable',
         ]);
     }
 

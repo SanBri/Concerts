@@ -16,18 +16,18 @@
                 <h2>Mes réservations à venir</h2>
                 <div class="title--line"></div>
             </div>
-            <div class="each-block">
             {% for reservation in reservations %}
-                <p><span class="important-text">Réservation n°{{ reservation.id }}</span></p>
-                <p><span class="important-text">{{ reservation.concert.name }}</span><br />
-                Date : {{ reservation.concert.date | date('d/m/Y') }}<br />
-                Nombre de places réservées : {{ reservation.reservedPlaces }}</p>
-                <div class="btn-block">
-                    <p><a href="{{ path('showConcert', {'id' : reservation.concert.id}) }}"><input type="button" class="btn" value="Voir le concert"></a>
-                    <a href="{{ path('confirmReservationCancel', {'reservationId': reservation.id, 'submittedToken': submittedToken}) }}"><input type="button" class="btn" value="Annuler la réservation"></a></p>
+                <div class="each-block">
+                    <p><span class="important-text">Réservation n°{{ reservation.id }}</span></p>
+                    <p><span class="important-text">{{ reservation.concert.name }}</span><br />
+                    Date : {{ reservation.concert.date | date('d/m/Y') }}<br />
+                    Nombre de places réservées : {{ reservation.reservedPlaces }}</p>
+                    <div class="btn-block">
+                        <p><a href="{{ path('showConcert', {'id' : reservation.concert.id}) }}"><input type="button" class="btn" value="Voir le concert"></a>
+                        <a href="{{ path('confirmReservationCancel', {'reservationId': reservation.id, 'submittedToken': submittedToken}) }}"><input type="button" class="btn" value="Annuler la réservation"></a></p>
+                    </div>
                 </div>
             {% endfor %}
-            </div>
         {% else %}
             <p>Vous n'avez pas encore de réservation</p>    
             <a href="{{ path('concertsList') }}"><button class="btn">Chercher un événement</button></a>

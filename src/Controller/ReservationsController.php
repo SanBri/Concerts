@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Entity\Concert;
 use App\Entity\Reservation;
+use Swift_Mailer;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -78,7 +79,7 @@ class ReservationsController extends AbstractController
     /**
      * @Route("/annulation_reservation/{reservationId}/{submittedToken}", name="cancelReservation")
      */
-    public function cancelReservation($reservationId, $submittedToken, ObjectManager $manager)
+    public function cancelReservation($reservationId, $submittedToken, ObjectManager $manager, Swift_Mailer $mailer)
     {
         $resp = $this->isUserAuthorisedToCancelReservation($reservationId, $submittedToken);
         if ($resp === true) {
@@ -91,6 +92,11 @@ class ReservationsController extends AbstractController
             $reservation->setStatus('Annulé');
             $manager->persist($reservation);
             $manager->flush();
+            $message = (new \Swift_Message('Hello Email'))
+                ->setFrom('edelwevents@gmail.com')
+                ->setTo('sandro.brignoli@outlook.fr')
+                ->setBody('Test Mail', 'text/html');
+            $mailer->send($message);
             return $this->render('errors/success.html.twig', [
                 'title' => 'Confirmation',
                 'message' => 'Votre réservation a bien été annulée'

@@ -10,9 +10,9 @@
             <div class="title--line"></div>
         </div>
 
-        <h3>{{concert.name}} - <span class="details-text">{{concert.date | date('d/m/Y à h:i')}}</span></h3>
+        <h3><span class="important-text">{{concert.name}}<br/> {{concert.date | date('d/m/Y à h:i')}}</span></h3>
         <p><span class="error">Voulez-vous vraiment annuler cet événement ?</span></p>
-        <p><span class="details-text">(Toutes les réservations pour cet événement seront annulées et un mail informatif sera envoyé à toutes les personnes ayant une réservation pour celui-ci)</span></p>
+        <p class="details-text">Toutes les réservations pour cet événement seront annulées et un mail informatif sera envoyé à toutes les personnes ayant une réservation pour celui-ci</p>
 
         <div class="btn-block">
             <a href="{{ path('showConcert', {'id': concert.id}) }}"><input type="button" class="btn" value="Retour"></a>

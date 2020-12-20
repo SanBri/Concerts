@@ -26,7 +26,7 @@ class EmailsController extends AbstractController
                 $email = (new \Swift_Message('Confirmation réservation'))
                         ->setFrom('manoir.edelweiss@gmail.com')
                         ->setTo('sanbsanb@hotmail.fr')
-                        ->setBody($this->renderView('errors/error403.html.twig', [
+                        ->setBody($this->renderView('bundles/TwigBundle/Exception/error403.html.twig', [
                             'title' => 'Erreur 403'
                         ]));
                 $mailer->send($email); 
