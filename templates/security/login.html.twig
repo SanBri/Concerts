@@ -15,12 +15,12 @@
                     <p><i class="fas fa-lock"></i><input type="password" required placeholder="Mot de passe" name="_password"></p>
                     <input class="login-block__button" type="submit" value="Envoyer">
                 </form>
-                <p><a href="">J'ai oublié mon mot de passe</a></p>
+                <p><a href="{{ path('forgetPassword') }}">J'ai oublié mon mot de passe</a></p>
                 <p><a href="{{ path('register') }}">Créer un compte</a></p>
             </div>
         {% else %}
             <div class="login-block__form">
-                <p>Vous êtes déjà connecté</p>
+                <p>Vous êtes déjà connecté(e)</p>
                 <a href="{{ path("concertsList") }}"><input class="login-block__button" type="submit" value="Retour"></a>
             </div>
         {% endif %}

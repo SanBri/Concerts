@@ -35,6 +35,21 @@ class ReservationsController extends AbstractController
         }
     }
 
+    public function isTheSameUser($route, $userId) {
+        $actualUser = $this->getUser();
+        if ($actualUser) {
+            $actualUserId = $actualUser->getId();
+            if ($userId == $actualUserId) {
+                $resp = true;
+            } else {
+                $resp = $this->redirectToRoute($route, ['userId' => $actualUserId]);
+            }
+        } else {
+            $resp = $this->redirectToRoute("login");
+        }
+        return $resp;
+    }
+
     public function isUserAuthorisedToCancelReservation($reservationId, $submittedToken) {
         $actualUser = $this->getUser();
         if ($actualUser != NULL) {
@@ -92,10 +107,10 @@ class ReservationsController extends AbstractController
             $reservation->setStatus('Annulé');
             $manager->persist($reservation);
             $manager->flush();
-            $message = (new \Swift_Message('Hello Email'))
+            $message = (new \Swift_Message('Votre réservation a été annulée'))
                 ->setFrom('edelwevents@gmail.com')
                 ->setTo('sandro.brignoli@outlook.fr')
-                ->setBody('Test Mail', 'text/html');
+                ->setBody('Votre réservation a bien été annulée, merci. ', 'text/html');
             $mailer->send($message);
             return $this->render('errors/success.html.twig', [
                 'title' => 'Confirmation',

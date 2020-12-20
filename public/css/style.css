@@ -79,7 +79,8 @@ p, a, h3, li {
 
 .container__body {
 	line-height: 1.5;
-	padding-top: 50px;
+	padding: 50px 0;
+	min-height: 400px;
 	font-size: 20px;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;

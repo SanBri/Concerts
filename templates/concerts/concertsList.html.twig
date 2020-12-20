@@ -56,7 +56,7 @@
                       <div class="each-event-content__ title--line"></div>
                     </div>  {# each-event-content__ title #}
                     {% if concert.reservation >= concert.maxPlaces %}
-                        <p><span id="full-reservations">COMPLET</span></p>
+                      <p><span id="full-reservations">COMPLET</span></p>
                     {% endif %}
                     <div class="each-event-content___infos">
                       <p><i class="far fa-calendar-alt"></i> {{ concert.date | date('d/m/Y') }}</p>

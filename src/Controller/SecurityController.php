@@ -6,6 +6,8 @@ use App\Entity\User;
 use App\Entity\ChangePassword;
 use App\Form\UserRegisterType;
 use App\Form\ChangePasswordType;
+use App\Form\ResetPasswordType;
+use Swift_Mailer;
 use Doctrine\Persistence\ObjectManager;
 use App\Controller\ReservationsController;
 use Symfony\Component\HttpFoundation\Request;
@@ -111,6 +113,47 @@ class SecurityController extends AbstractController
         }
     }
 
+    /**
+     * @Route("/oubli_mot_de_passe", name="forgetPassword")
+    */
+    public function forgetPassword(Request $request, Swift_Mailer $mailer, ObjectManager $manager, UserPasswordEncoderInterface $encoder) {
+
+        $form = $this->createForm(ResetPasswordType::class);
+        $form->handleRequest($request); 
+        $notUser = null; 
+        $isUser = false;
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $formDataUserEmail = $form->get('userEmail')->getData();
+            $concertRepo = $this->getDoctrine()->getRepository(User::class);
+            $user = $concertRepo->findOneBy(array('email' => $formDataUserEmail)); 
+            if ($user) {
+                $userEmail = $user->getEmail();
+                $newPassword = random_int(10000000, 99999999);
+                $hashedPassword = $encoder->encodePassword($user, $newPassword);
+                $user->setPassword($hashedPassword);
+                $manager->persist($user);
+                $manager->flush();   
+                $email = (new \Swift_Message('Mot de passe réinitialisé'))
+                ->setFrom('edelwevents@gmail.com')
+                ->setTo($userEmail)
+                ->setBody($this->renderView('emails/resetPasswordEmail.html.twig', [
+                    'newPassword' => $newPassword,
+                ]));
+                $mailer->send($email); 
+                $isUser = true;
+            } else {
+                $notUser = "Ce compte n'existe pas";
+            }
+        }
+
+        return $this->render('security/passwordForgotten.html.twig', [
+            'title' => 'Oubli de mot de passe',
+            'userEmailForm' => $form->createView(),
+            'isUser' => $isUser,
+            'notUser' => $notUser,
+        ]);
+    }
 }
 
 

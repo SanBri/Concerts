@@ -2,6 +2,13 @@
 
 {% block body %}
 
-Votre réservation {{reservation.id}} au nom de {{reservation.user.email}} pour le concert {{reservation.concert.name}} bien été validée ( {{ reservation.mailSent }}). 
+Merci pour votre réservation, 
+
+Votre réservation {{reservation.id}} au nom de pour le concert {{reservation.concert.name}} bien été validée. 
+
+Vous pouvez retrouver votre réservation en cliquant ici : 
+<a href="http://217.160.28.253/concerts/public/index.php/reservations/" {{ reservation.user.id }}><button class="btn">Voir mes réservations</button></a>
+
+Bonne journée à vous.
 
 {% endblock %}
