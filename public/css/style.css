@@ -285,7 +285,6 @@ label {
 
 .container__footer {
 	border-top: solid 0.5px black;
-	padding: auto;
 	display: flex;
 	flex-direction: row;
 	height: 50px;
@@ -656,7 +655,7 @@ label {
 	display: inline;
 }
 #create_concert_date select, #form_date select{
-	background-color: none;
+	background-color: initial;
 	border-radius: 10px;
 	background: rgb(181, 129, 185);
 	outline: none;

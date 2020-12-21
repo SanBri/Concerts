@@ -80,7 +80,7 @@
                                 </p>
                                 {% if app.user %}
                                     {{ form_start(reservationForm) }}
-                                        <p>{{ form_errors(reservationForm)}}
+                                        <p>{{ form_errors(reservationForm)}}</p>
                                         <p>{{ form_row(reservationForm.reservedPlaces, {
                                             'required': 'true',
                                             'label': 'Nombre de places : ',
@@ -107,7 +107,9 @@
                     </div>
                 </div> {# END RESERVATIONS BLOCK  #}
             {% else %}
-                <h3><strong>Cet événément est annulé</strong></h3>
+            <div class="main">
+                <p>Cet événément est annulé</p>
+            </div>
             {% endif %}
         </div>
     </div>

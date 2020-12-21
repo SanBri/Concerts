@@ -101,6 +101,7 @@ class ReservationsController extends AbstractController
             $reservationRepo = $this->getDoctrine()->getRepository(Reservation::class);
             $reservation = $reservationRepo->find($reservationId);
             $concert = $reservation->getConcert();
+            $user = $reservation->getConcert();
             $concertReservations = $concert->getReservation();
             $reservedPlaces = $reservation->getReservedPlaces();
             $concert->setReservation($concertReservations - $reservedPlaces);

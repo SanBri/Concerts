@@ -9,7 +9,7 @@
           <h2>TROUVEZ UN ÉVÉNEMENT PRÈS DE CHEZ VOUS !</h2>
         </div>
         <div class="search-event-block__form">
-          <p>{{ form_start(concertsSearchForm) }}
+          {{ form_start(concertsSearchForm) }}
             {{ form_errors(concertsSearchForm) }}
             {{ form_row(concertsSearchForm.concertsQuery, {
                 'required': 'true',
@@ -20,7 +20,7 @@
               }) 
             }}
             <i class="fas fa-search"></i>
-          {{ form_end(concertsSearchForm) }}</p>
+          {{ form_end(concertsSearchForm) }}
         </div>
       </div>
     </div>
